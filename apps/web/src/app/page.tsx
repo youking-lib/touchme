@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Card } from "@repo/ui/card";
+import { Player } from "@repo/player/player";
 
 function Gradient({
   conic,
@@ -46,10 +47,9 @@ const LINKS = [
 export default function Page(): JSX.Element {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
-      <div className="z-10 items-center justify-between w-full max-w-5xl font-mono text-sm lg:flex">
+      <div className="items-center justify-between w-full max-w-5xl font-mono text-sm lg:flex">
         <p className="fixed top-0 left-0 flex justify-center w-full px-4 pt-8 pb-6 border-b bg-gradient-to-b backdrop-blur-2xl border-neutral-800 bg-zinc-800/30 from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:bg-zinc-800/30">
-          examples/with-tailwind -&nbsp;
-          <code className="font-mono font-bold">web</code>
+          123
         </p>
         <div className="fixed bottom-0 left-0 flex items-end justify-center w-full h-48 bg-gradient-to-t from-black via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a
@@ -104,6 +104,7 @@ export default function Page(): JSX.Element {
             className="top-[-500px] opacity-[0.15] w-[1000px] h-[1000px]"
             conic
           />
+
           <div className="z-50 flex flex-col items-center justify-center gap-5 px-6 text-center lg:gap-6">
             <svg
               className="w-[160px] md:w-[200px] fill-white"
@@ -132,6 +133,10 @@ export default function Page(): JSX.Element {
             {description}
           </Card>
         ))}
+      </div>
+
+      <div className="absolute left-10 top-10">
+        <Player />
       </div>
     </main>
   );
