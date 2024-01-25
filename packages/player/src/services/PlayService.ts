@@ -1,9 +1,9 @@
-import { PlayerApi } from "../PlayerApi";
+import { Player } from "../api";
 
 export class PlayService {
   private audio: HTMLAudioElement = new Audio();
 
-  constructor(public api: PlayerApi) {}
+  constructor(public api: Player) {}
 
   _setAudioSrc(path: string) {
     this.audio.src = path;

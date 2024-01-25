@@ -1,8 +1,8 @@
 import { useImmer } from "use-immer";
-import React, { useMemo } from "react";
-import { ApiContext, StateContext } from "./hooks";
-import { PlayerState } from "./model/state";
-import { PlayerApi } from "./PlayerApi";
+import React, { useEffect, useState } from "react";
+import { PlayerContext, StateContext } from "../hooks";
+import { PlayerState } from "../model/state";
+import { Player } from "../api";
 
 export function Provider(
   props: React.PropsWithChildren<{ initialState?: PlayerState }>
@@ -10,8 +10,10 @@ export function Provider(
   const [state, dispatch] = useImmer(
     () => props.initialState || new PlayerState()
   );
-  const api = useMemo(() => {
-    return new PlayerApi({
+  const [player, setPlayer] = useState<Player | null>(null);
+
+  useEffect(() => {
+    const instance = new Player({
       state,
       onChange(nextState) {
         dispatch(draft => {
@@ -21,10 +23,13 @@ export function Provider(
         });
       },
     });
+
+    setPlayer(instance);
+
+    window["Player"] = instance;
   }, []);
 
-  window["playerApi"] = api;
-  api.setState(state);
+  player?.setState(state);
 
   return (
     <StateContext.Provider
@@ -33,7 +38,9 @@ export function Provider(
         dispatch,
       }}
     >
-      <ApiContext.Provider value={api}>{props.children}</ApiContext.Provider>
+      <PlayerContext.Provider value={player}>
+        {props.children}
+      </PlayerContext.Provider>
     </StateContext.Provider>
   );
 }

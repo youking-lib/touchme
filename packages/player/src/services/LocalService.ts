@@ -3,7 +3,7 @@ import pickBy from "lodash/pickBy";
 import localforage from "localforage";
 import { parseBlob } from "music-metadata-browser";
 
-import { PlayerApi } from "../PlayerApi";
+import { Player } from "../api";
 import { Track, Playlist } from "../model";
 import { readImageAsBase64 } from "../utils";
 
@@ -12,7 +12,7 @@ const playlistStorage = localforage.createInstance({
 });
 
 export class LocalService {
-  constructor(public api: PlayerApi) {}
+  constructor(public api: Player) {}
 
   async getPlaylists() {
     const playlist: Playlist[] = [];

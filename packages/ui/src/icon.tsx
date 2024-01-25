@@ -9,5 +9,5 @@ export type IconProps = {
 export const Icon = (props: IconProps) => {
   const LucideIcon = icons[props.name];
 
-  return <LucideIcon {...props} />;
+  return <LucideIcon size={16} {...props} />;
 };

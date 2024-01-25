@@ -1,13 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Provider } from "./provider";
-import { PlayerLists } from "./components/player-lists";
+import { Main } from "./components/main";
 
 export function Player({ children }: React.PropsWithChildren): JSX.Element {
-  return (
-    <Provider>
-      <PlayerLists />
-    </Provider>
-  );
+  return <Main />;
 }

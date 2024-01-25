@@ -1,0 +1,23 @@
+{
+  "name": "@repo/utils",
+  "version": "0.0.0",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./libs": "./src/libs/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {},
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "tailwind-merge": "^2.2.1",
+    "clsx": "^2.1.0"
+  }
+}

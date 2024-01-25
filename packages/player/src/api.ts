@@ -7,7 +7,7 @@ export type PlayerOptions = {
   onChange?: (state: PlayerState, prev: PlayerState) => void;
 };
 
-export class PlayerApi {
+export class Player {
   public service = {
     playService: new PlayService(this),
     localService: new LocalService(this),

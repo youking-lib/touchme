@@ -1,7 +1,7 @@
-import type { PlayerApi } from "./PlayerApi";
+import type { Player } from "./api";
 
 declare global {
   interface Window {
-    playerApi: PlayerApi;
+    Player: Player;
   }
 }
