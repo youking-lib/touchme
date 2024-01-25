@@ -18,11 +18,11 @@ export function useMutation(): UseMutationReturn {
       modifier[key] = (...args: any[]) => {
         dispatch(draft => {
           // @ts-ignore
-          StateMutation[key](draft, ...args);
+          return StateMutation[key](draft, ...args);
         });
       };
     });
 
     return modifier;
-  }, []);
+  }, [dispatch]);
 }

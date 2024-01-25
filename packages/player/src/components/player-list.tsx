@@ -8,9 +8,10 @@ import {
   TableCell,
   TableRow,
 } from "@repo/ui/table";
+import { clsx } from "clsx";
 
 import { useSelector, useMutation, useLazyPlayer } from "../hooks";
-import { Playlist } from "../model";
+import { Playlist, StateSelector, Track } from "../model";
 
 export function PlayerList() {
   const localPlaylists = useSelector(state => state.localPlaylists);
@@ -44,42 +45,65 @@ export function PlayerList() {
 
 export function Tracks({ playlist }: { playlist: Playlist }) {
   const tracks = playlist.tracks || [];
+  const playTrack = useSelector(StateSelector.getPlayTrack);
 
   return (
     <div className="ui-text-muted-foreground">
       <Table className="ui-text-xs ui-table-fixed">
         <colgroup>
           <col width="2" />
-          <col width="16" />
-          <col width="4" />
+          <col width="14" />
+          <col width="6" />
         </colgroup>
 
         <TableCaption className="ui-text-xs">
           {playlist.name}|{tracks.length} Tracks
         </TableCaption>
         <TableBody>
-          <TableRow className="ui-text-foreground">
-            <TableCell>
-              <Icon name="Activity" />
-            </TableCell>
-            <TableCell>有没有人告诉你</TableCell>
-            <TableCell className="ui-text-right">陈楚生</TableCell>
-          </TableRow>
-
           {tracks.map((track, index) => {
             return (
-              <TableRow key={track.title}>
-                <TableCell className="">{index + 1}.</TableCell>
-                <TableCell>{track.title}</TableCell>
-                <TableCell className="ui-text-right">
-                  {track.artist[0]}
-                </TableCell>
-              </TableRow>
+              <TrackRow
+                key={track.id}
+                track={track}
+                index={index}
+                active={playTrack?.id === track.id}
+              />
             );
           })}
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+type TrackRowProps = {
+  active: boolean;
+  track: Track;
+  index: number;
+};
+
+function TrackRow({ track, index, active }: TrackRowProps) {
+  const loader = useLazyPlayer();
+
+  return (
+    <TableRow
+      onClick={() => {
+        if (!active) {
+          loader(player => {
+            player.setTrack(track);
+          });
+        }
+      }}
+      className={clsx({ ["ui-text-foreground"]: active }, "ui-cursor-pointer")}
+    >
+      <TableCell className="">
+        {active ? <Icon name="Activity" /> : `${index + 1}.`}
+      </TableCell>
+      <TableCell className="ui-text-ellipsis ui-text-nowrap ui-overflow-hidden">
+        {track.title}
+      </TableCell>
+      <TableCell className="ui-text-right">{track.artist[0]}</TableCell>
+    </TableRow>
   );
 }
 

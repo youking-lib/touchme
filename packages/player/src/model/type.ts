@@ -29,3 +29,9 @@ export interface Playlist {
   name: string;
   tracks: Track[];
 }
+
+export enum PlayerStatus {
+  PLAY = "play",
+  PAUSE = "pause",
+  STOP = "stop",
+}

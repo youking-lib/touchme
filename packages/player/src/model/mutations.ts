@@ -1,4 +1,4 @@
-import { Playlist, StateSelector, Track } from ".";
+import { PlayerStatus, Playlist, StateSelector, Track } from ".";
 import { PlayerState } from "./state";
 
 export const setDarkMode = (state: PlayerState) => {
@@ -15,8 +15,12 @@ export const setLocalPlaylists = (
     draft.localPlaylists = playlists;
   });
 
-  nextState = setOrInitPlayQueue(nextState);
-  nextState = setOrInitPlayTrack(nextState);
+  if (!nextState.playQueue) {
+    nextState = setOrInitPlayQueue(nextState);
+  }
+  if (!nextState.playTrack) {
+    nextState = setOrInitPlayTrack(nextState);
+  }
 
   return nextState;
 };
@@ -55,3 +59,8 @@ export const setOrInitPlayTrack = (state: PlayerState, track?: Track) => {
     }
   });
 };
+
+export const setPlayStatus = (state: PlayerState, status: PlayerStatus) =>
+  PlayerState.set(state, draft => {
+    draft.playStatus = status;
+  });

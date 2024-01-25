@@ -1,15 +1,24 @@
 import { Icon } from "@repo/ui/icon";
 import { ToggleGroup, ToggleGroupItem } from "@repo/ui/toggle-group";
 import { Toggle } from "@repo/ui/toggle";
-
 import { Progress } from "@repo/ui/progress";
 import { Separator } from "@repo/ui/separator";
+
+import { useLazyPlayer, useSelector } from "../hooks";
+import { StateSelector, PlayerStatus } from "../model";
 
 type PlayerControlProps = {
   onMenuBtnClick?: () => void;
 };
 
 export function PlayerControl({ onMenuBtnClick }: PlayerControlProps) {
+  const playStatus = useSelector(StateSelector.getPlayStatus);
+  const playTrack = useSelector(StateSelector.getPlayTrack);
+  const loader = useLazyPlayer();
+
+  const artist = playTrack?.artist[0];
+  const album = playTrack?.album;
+
   return (
     <div className="ui-flex ui-flex-col ui-py-1 ui-px-4">
       <div>
@@ -26,9 +35,12 @@ export function PlayerControl({ onMenuBtnClick }: PlayerControlProps) {
         <Separator className="ui-mb-4 ui-mt-1" />
 
         <div className="ui-space-y-2">
-          <h4 className="ui-font-medium ui-leading-none">有没有人告诉你</h4>
+          <h4 className="ui-font-medium ui-leading-none">
+            {playTrack?.title || ""}
+          </h4>
           <p className="ui-text-xs ui-text-muted-foreground">
-            <span>@陈楚生</span>|原来我一直都不孤单
+            {artist && <span>@{artist}|</span>}
+            {album}
           </p>
         </div>
       </div>
@@ -41,13 +53,39 @@ export function PlayerControl({ onMenuBtnClick }: PlayerControlProps) {
         </Toggle>
 
         <ToggleGroup type="single">
-          <ToggleGroupItem value="SkipBack">
+          <ToggleGroupItem
+            data-state="off"
+            value="SkipBack"
+            onClick={() => {
+              loader(player => {
+                player.prev();
+              });
+            }}
+          >
             <Icon name="SkipBack" />
           </ToggleGroupItem>
-          <ToggleGroupItem value="Play">
-            <Icon name="Play" />
+          <ToggleGroupItem
+            data-state="off"
+            value="Play"
+            onClick={() => {
+              loader(player => {
+                player.playPause();
+              });
+            }}
+          >
+            {playStatus === PlayerStatus.PAUSE && <Icon name="Play" />}
+            {playStatus === PlayerStatus.STOP && <Icon name="Play" />}
+            {playStatus === PlayerStatus.PLAY && <Icon name="Pause" />}
           </ToggleGroupItem>
-          <ToggleGroupItem value="SkipForward">
+          <ToggleGroupItem
+            data-state="off"
+            value="SkipForward"
+            onClick={() => {
+              loader(player => {
+                player.next();
+              });
+            }}
+          >
             <Icon name="SkipForward" />
           </ToggleGroupItem>
         </ToggleGroup>

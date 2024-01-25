@@ -1,5 +1,5 @@
 import { immerable, produce } from "immer";
-import { Playlist, Track } from ".";
+import { PlayerStatus, Playlist, Track } from ".";
 
 export class PlayerState {
   [immerable] = true;
@@ -15,10 +15,13 @@ export class PlayerState {
 
   playQueue: Playlist | null = null;
   playTrack: Track | null = null;
+  playStatus: PlayerStatus = PlayerStatus.STOP;
 
   static set(state: PlayerState, recipe: (draft: PlayerState) => void) {
-    return produce(state, draft => {
-      recipe(state);
+    const nextState = produce(state, draft => {
+      recipe(draft);
     });
+
+    return nextState;
   }
 }

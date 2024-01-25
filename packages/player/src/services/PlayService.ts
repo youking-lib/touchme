@@ -1,11 +1,13 @@
 import { Player } from "../api";
+import { Track } from "../model";
 
 export class PlayService {
   private audio: HTMLAudioElement = new Audio();
+  private track: Track | null = null;
 
   constructor(public api: Player) {}
 
-  _setAudioSrc(path: string) {
+  DEBUG_setAudioSrc(path: string) {
     this.audio.src = path;
   }
 
@@ -47,6 +49,13 @@ export class PlayService {
 
   setVolume(volume: number) {
     this.audio.volume = volume;
+  }
+
+  setTrack(track: Track) {
+    if (this.track !== track) {
+      this.track = track;
+      this.audio.src = track.path;
+    }
   }
 
   setPlaybackRate(playbackRate: number) {

@@ -1,5 +1,5 @@
 import { useImmer } from "use-immer";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { PlayerContext, StateContext } from "../hooks";
 import { PlayerState } from "../model/state";
 import { Player } from "../api";
@@ -29,7 +29,9 @@ export function Provider(
     window["Player"] = instance;
   }, []);
 
-  player?.setState(state);
+  useLayoutEffect(() => {
+    player?.setState(state);
+  }, [state, player]);
 
   return (
     <StateContext.Provider
