@@ -1,3 +1,4 @@
+import { Playlist } from "./model";
 import { PlayerState } from "./model/state";
 import { LocalService } from "./services/LocalService";
 import { PlayService } from "./services/PlayService";
@@ -26,5 +27,9 @@ export class Player {
       this.options.state = state;
       this.options.onChange?.(state, prevState);
     }
+  }
+
+  getPlayinglist(): Playlist | null {
+    return this.getState().localPlaylists[0] || null;
   }
 }

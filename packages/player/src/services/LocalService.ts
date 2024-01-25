@@ -63,15 +63,17 @@ export class LocalService {
     };
 
     const { src } = await readImageAsBase64(file);
+    const id = nanoid();
 
     return {
       ...this.getDefaultMetadata(),
       ...pickBy(metadata),
       path: src,
+      id,
     };
   }
 
-  getDefaultMetadata(): Track {
+  getDefaultMetadata(): Omit<Track, "id"> {
     return {
       album: "Unknown",
       artist: ["Unknown artist"],

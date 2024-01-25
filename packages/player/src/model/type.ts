@@ -1,4 +1,5 @@
 export interface Track {
+  id: string;
   album: string;
   artist: string[];
   disk: {
@@ -26,5 +27,5 @@ export interface Track {
 export interface Playlist {
   id: string;
   name: string;
-  tracks?: Track[];
+  tracks: Track[];
 }

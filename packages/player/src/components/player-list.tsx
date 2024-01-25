@@ -23,7 +23,7 @@ export function PlayerList() {
       const playlists = await player.service.localService.getPlaylists();
 
       setLoading(false);
-      mutations.updateLocalPlaylists(playlists);
+      mutations.setLocalPlaylists(playlists);
     });
   }, []);
 
@@ -47,7 +47,13 @@ export function Tracks({ playlist }: { playlist: Playlist }) {
 
   return (
     <div className="ui-text-muted-foreground">
-      <Table className="ui-text-xs">
+      <Table className="ui-text-xs ui-table-fixed">
+        <colgroup>
+          <col width="2" />
+          <col width="16" />
+          <col width="4" />
+        </colgroup>
+
         <TableCaption className="ui-text-xs">
           {playlist.name}|{tracks.length} Tracks
         </TableCaption>
@@ -63,7 +69,7 @@ export function Tracks({ playlist }: { playlist: Playlist }) {
           {tracks.map((track, index) => {
             return (
               <TableRow key={track.title}>
-                <TableCell>{index + 1}.</TableCell>
+                <TableCell className="">{index + 1}.</TableCell>
                 <TableCell>{track.title}</TableCell>
                 <TableCell className="ui-text-right">
                   {track.artist[0]}
@@ -95,7 +101,7 @@ function UploadLocal() {
 
       const playlists = await player.service.localService.getPlaylists();
 
-      mutations.updateLocalPlaylists(playlists);
+      mutations.setLocalPlaylists(playlists);
     },
     async beforeUpload(_, files) {
       return false;

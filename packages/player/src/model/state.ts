@@ -1,4 +1,4 @@
-import { immerable } from "immer";
+import { immerable, produce } from "immer";
 import { Playlist, Track } from ".";
 
 export class PlayerState {
@@ -17,6 +17,8 @@ export class PlayerState {
   playTrack: Track | null = null;
 
   static set(state: PlayerState, recipe: (draft: PlayerState) => void) {
-    return recipe(state);
+    return produce(state, draft => {
+      recipe(state);
+    });
   }
 }
