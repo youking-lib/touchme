@@ -1,16 +1,9 @@
 import { Icon } from "@repo/ui/icon";
 import Upload, { UploadProps } from "rc-upload";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableRow,
-} from "@repo/ui/table";
-import { clsx } from "clsx";
 
 import { useSelector, useMutation, useLazyPlayer } from "../hooks";
-import { Playlist, ModelSelector, Track } from "../model";
+import { ModelSelector } from "../model";
+import { PlayerTracks } from "./player-tracks";
 
 export function PlayerList() {
   const playlists = useSelector(ModelSelector.getPlaylists);
@@ -25,74 +18,8 @@ export function PlayerList() {
 
   return (
     <div className="ui-min-h-[200px] ui-pb-2">
-      {playlist && <Tracks playlist={playlist} />}
+      {playlist && <PlayerTracks playlist={playlist} />}
     </div>
-  );
-}
-
-export function Tracks({ playlist }: { playlist: Playlist }) {
-  const tracks = playlist.tracks || [];
-  const playTrack = useSelector(ModelSelector.getPlayingTrack);
-
-  return (
-    <div className="ui-text-muted-foreground">
-      <Table className="ui-text-xs ui-table-fixed">
-        <colgroup>
-          <col width="2" />
-          <col width="14" />
-          <col width="6" />
-        </colgroup>
-
-        <TableCaption className="ui-text-xs">
-          {playlist.name}|{tracks.length} Tracks
-        </TableCaption>
-        <TableBody>
-          {tracks.map((track, index) => {
-            return (
-              <TrackRow
-                key={track.id}
-                track={track}
-                index={index}
-                active={playTrack?.id === track.id}
-              />
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
-
-type TrackRowProps = {
-  active: boolean;
-  track: Track;
-  index: number;
-};
-
-function TrackRow({ track, index, active }: TrackRowProps) {
-  const loader = useLazyPlayer();
-
-  return (
-    <TableRow className={clsx({ ["ui-text-foreground"]: active })}>
-      <TableCell className="">
-        {active ? <Icon name="Activity" /> : `${index + 1}.`}
-      </TableCell>
-      <TableCell
-        className="ui-text-ellipsis ui-text-nowrap ui-overflow-hidden hover:ui-underline ui-cursor-pointer"
-        onClick={() => {
-          loader(player => {
-            if (!active) {
-              player.setTrack(track);
-            } else {
-              player.playPause();
-            }
-          });
-        }}
-      >
-        {track.title}
-      </TableCell>
-      <TableCell className="ui-text-right">{track.artist[0]}</TableCell>
-    </TableRow>
   );
 }
 
