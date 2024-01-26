@@ -1,19 +1,21 @@
+import { useRef } from "react";
 import { Icon } from "@repo/ui/icon";
 import { ToggleGroup, ToggleGroupItem } from "@repo/ui/toggle-group";
 import { Toggle } from "@repo/ui/toggle";
-import { Progress } from "@repo/ui/progress";
+import { Slider } from "@repo/ui/slider";
 import { Separator } from "@repo/ui/separator";
 
-import { useLazyPlayer, useSelector } from "../hooks";
-import { StateSelector, PlayerStatus } from "../model";
+import { useLazyPlayer, useMutation, useSelector } from "../hooks";
+import { ModelSelector, PlayerStatus } from "../model";
 
-type PlayerControlProps = {
-  onMenuBtnClick?: () => void;
-};
+type PlayerControlProps = {};
 
-export function PlayerControl({ onMenuBtnClick }: PlayerControlProps) {
-  const playStatus = useSelector(StateSelector.getPlayStatus);
-  const playTrack = useSelector(StateSelector.getPlayTrack);
+export function PlayerControl({}: PlayerControlProps) {
+  const playTrack = useSelector(ModelSelector.getPlayingTrack);
+  const playStatus = useSelector(ModelSelector.getPlayingStatus);
+  const playerTabsOpen = useSelector(ModelSelector.getPlayerTabsOpen);
+
+  const mutations = useMutation();
   const loader = useLazyPlayer();
 
   const artist = playTrack?.artist[0];
@@ -45,10 +47,15 @@ export function PlayerControl({ onMenuBtnClick }: PlayerControlProps) {
         </div>
       </div>
 
-      <Progress className="ui-my-2" value={33} />
+      <PlayingProgress />
 
       <div className="flex ui-justify-between">
-        <Toggle onClick={onMenuBtnClick}>
+        <Toggle
+          data-state={playerTabsOpen ? "on" : "off"}
+          onClick={() => {
+            mutations.setPlayerTabsOpen();
+          }}
+        >
           <Icon name="Menu" />
         </Toggle>
 
@@ -94,5 +101,21 @@ export function PlayerControl({ onMenuBtnClick }: PlayerControlProps) {
         </Toggle>
       </div>
     </div>
+  );
+}
+
+function PlayingProgress() {
+  const track = useSelector(ModelSelector.getPlayingTrack);
+  const playingCurrentTime = useSelector(ModelSelector.getPlayingCurrentTime);
+
+  const ref = useRef<React.ElementRef<typeof Slider>>(null);
+
+  return (
+    <Slider
+      ref={ref}
+      className="ui-my-2"
+      max={track?.duration}
+      value={[playingCurrentTime]}
+    />
   );
 }

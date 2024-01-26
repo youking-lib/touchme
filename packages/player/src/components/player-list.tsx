@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Icon } from "@repo/ui/icon";
 import Upload, { UploadProps } from "rc-upload";
 import {
@@ -11,30 +10,18 @@ import {
 import { clsx } from "clsx";
 
 import { useSelector, useMutation, useLazyPlayer } from "../hooks";
-import { Playlist, StateSelector, Track } from "../model";
+import { Playlist, ModelSelector, Track } from "../model";
 
 export function PlayerList() {
-  const localPlaylists = useSelector(state => state.localPlaylists);
-  const mutations = useMutation();
-  const loader = useLazyPlayer();
-  const [loading, setLoading] = useState(true);
+  const playlists = useSelector(ModelSelector.getPlaylists);
 
-  useEffect(() => {
-    loader(async player => {
-      const playlists = await player.service.localService.getPlaylists();
-
-      setLoading(false);
-      mutations.setLocalPlaylists(playlists);
-    });
-  }, []);
-
-  const isEmpty = !loading && localPlaylists.length === 0;
+  const isEmpty = playlists.length === 0;
 
   if (isEmpty) {
     return <UploadLocal />;
   }
 
-  const playlist = localPlaylists[0];
+  const playlist = playlists[0];
 
   return (
     <div className="ui-min-h-[200px] ui-pb-2">
@@ -45,7 +32,7 @@ export function PlayerList() {
 
 export function Tracks({ playlist }: { playlist: Playlist }) {
   const tracks = playlist.tracks || [];
-  const playTrack = useSelector(StateSelector.getPlayTrack);
+  const playTrack = useSelector(ModelSelector.getPlayingTrack);
 
   return (
     <div className="ui-text-muted-foreground">
@@ -86,20 +73,22 @@ function TrackRow({ track, index, active }: TrackRowProps) {
   const loader = useLazyPlayer();
 
   return (
-    <TableRow
-      onClick={() => {
-        if (!active) {
-          loader(player => {
-            player.setTrack(track);
-          });
-        }
-      }}
-      className={clsx({ ["ui-text-foreground"]: active }, "ui-cursor-pointer")}
-    >
+    <TableRow className={clsx({ ["ui-text-foreground"]: active })}>
       <TableCell className="">
         {active ? <Icon name="Activity" /> : `${index + 1}.`}
       </TableCell>
-      <TableCell className="ui-text-ellipsis ui-text-nowrap ui-overflow-hidden">
+      <TableCell
+        className="ui-text-ellipsis ui-text-nowrap ui-overflow-hidden hover:ui-underline ui-cursor-pointer"
+        onClick={() => {
+          loader(player => {
+            if (!active) {
+              player.setTrack(track);
+            } else {
+              player.playPause();
+            }
+          });
+        }}
+      >
         {track.title}
       </TableCell>
       <TableCell className="ui-text-right">{track.artist[0]}</TableCell>
@@ -114,20 +103,20 @@ function UploadLocal() {
   const props: UploadProps = {
     async onBatchStart(files) {
       const player = await loader();
-      const tracks = await player.service.localService.importFiles(
+      const tracks = await player.localService.importFiles(
         files.map(item => item.file)
       );
 
-      await player.service.localService.createPlaylist({
+      await player.localService.createPlaylist({
         name: "Unknown Playlist",
         tracks,
       });
 
-      const playlists = await player.service.localService.getPlaylists();
+      const playlists = await player.localService.getPlaylists();
 
       mutations.setLocalPlaylists(playlists);
     },
-    async beforeUpload(_, files) {
+    async beforeUpload() {
       return false;
     },
     multiple: true,

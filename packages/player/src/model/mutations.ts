@@ -1,66 +1,61 @@
-import { PlayerStatus, Playlist, StateSelector, Track } from ".";
+import { PlayerStatus, Playlist, ModelSelector, Track } from ".";
 import { PlayerState } from "./state";
 
-export const setDarkMode = (state: PlayerState) => {
-  return PlayerState.set(state, state => {
+export const setDarkMode = (state: PlayerState) =>
+  PlayerState.set(state, state => {
     state.darkMode = !state.darkMode;
   });
-};
 
-export const setLocalPlaylists = (
+export const setPlayerTabsOpen = (
   state: PlayerState,
-  playlists: Playlist[]
-) => {
-  let nextState = PlayerState.set(state, draft => {
+  open = !state.playerTabsOpen
+) =>
+  PlayerState.set(state, state => {
+    state.playerTabsOpen = open;
+  });
+
+export const setLocalPlaylists = (state: PlayerState, playlists: Playlist[]) =>
+  PlayerState.set(state, draft => {
     draft.localPlaylists = playlists;
   });
 
-  if (!nextState.playQueue) {
-    nextState = setOrInitPlayQueue(nextState);
-  }
-  if (!nextState.playTrack) {
-    nextState = setOrInitPlayTrack(nextState);
-  }
-
-  return nextState;
-};
-
 export const setOrInitPlayQueue = (
   state: PlayerState,
-  playQueue?: Playlist
+  playingQueue?: Playlist
 ) => {
+  const playlists = ModelSelector.getPlaylists(state);
+
   return PlayerState.set(state, draft => {
-    if (!playQueue && state.localPlaylists.length > 0) {
-      playQueue = state.localPlaylists[0];
+    if (!playingQueue && playlists.length > 0) {
+      playingQueue = playlists[0];
     }
 
-    if (!playQueue) {
+    if (!playingQueue) {
       return;
     }
 
-    draft.playQueue = playQueue;
-
-    if (!playQueue.tracks) {
-      return;
-    }
+    draft.playingQueue = playingQueue;
   });
 };
 
 export const setOrInitPlayTrack = (state: PlayerState, track?: Track) => {
   return PlayerState.set(state, draft => {
-    if (!track && state.playQueue) {
-      track = state.playQueue.tracks[0];
+    if (!track && state.playingQueue) {
+      track = state.playingQueue.tracks[0];
     }
 
-    if (track && StateSelector.getHasPlayTrack(state, track.id)) {
-      draft.playTrack = track;
-
-      return;
+    if (track && ModelSelector.getTrackInPlayingQueueById(state, track.id)) {
+      draft.playingTrack = track;
     }
   });
 };
 
-export const setPlayStatus = (state: PlayerState, status: PlayerStatus) =>
+export const setPlayerStatus = (state: PlayerState, status: PlayerStatus) =>
   PlayerState.set(state, draft => {
-    draft.playStatus = status;
+    draft.playingStatus = status;
+  });
+
+export const setPlayerCurrentTime = (state: PlayerState, currentTime: number) =>
+  PlayerState.set(state, draft => {
+    draft.playingCurrentTime = currentTime;
   });

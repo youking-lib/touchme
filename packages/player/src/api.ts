@@ -3,12 +3,13 @@ import {
   PlayerState,
   PlayerStatus,
   Playlist,
-  StateMutation,
-  StateSelector,
+  ModelMutation,
+  ModelSelector,
   Track,
 } from "./model";
 import { LocalService } from "./services/LocalService";
 import { PlayService } from "./services/PlayService";
+import { ModelHelpers } from "./model-helpers";
 
 export type PlayerOptions = {
   state: PlayerState;
@@ -16,12 +17,25 @@ export type PlayerOptions = {
 };
 
 export class Player {
-  public service = {
-    playService: new PlayService(this),
-    localService: new LocalService(this),
-  };
+  playService = new PlayService(this);
+  localService = new LocalService(this);
 
   constructor(public options: PlayerOptions) {}
+
+  init() {
+    const destoryCallbacks = [
+      ModelHelpers.syncStateByAudioPlayerEvent(this),
+      ModelHelpers.syncStateByLocalService(this),
+    ];
+
+    return () => {
+      destoryCallbacks.forEach(item => {
+        if (isFunction(item)) {
+          item();
+        }
+      });
+    };
+  }
 
   getState() {
     return this.options.state;
@@ -40,9 +54,9 @@ export class Player {
   }
 
   playPause() {
-    const paused = this.service.playService.getAudio().paused;
+    const paused = this.playService.getAudio().paused;
 
-    if (paused && this.getState().playQueue) {
+    if (paused && this.getState().playingQueue) {
       return this.play();
     } else {
       return this.pause();
@@ -50,57 +64,67 @@ export class Player {
   }
 
   async play() {
-    const track = StateSelector.getPlayTrack(this.getState());
+    const track = ModelSelector.getPlayingTrack(this.getState());
 
     if (!track) {
       return;
     }
 
-    this.service.playService.setTrack(track);
-    await this.service.playService.play();
+    this.setTrack(track);
+    await this.playService.play();
 
     this.setState(state =>
-      StateMutation.setPlayStatus(state, PlayerStatus.PLAY)
+      ModelMutation.setPlayerStatus(state, PlayerStatus.PLAY)
     );
   }
 
   pause() {
-    this.service.playService.pause();
+    this.playService.pause();
 
     this.setState(state =>
-      StateMutation.setPlayStatus(state, PlayerStatus.PAUSE)
+      ModelMutation.setPlayerStatus(state, PlayerStatus.PAUSE)
     );
   }
 
   async next() {
-    const nextTrack = StateSelector.getNextPlayTrack(this.getState());
+    const nextTrack = ModelSelector.getNextPlayTrack(this.getState());
 
     if (nextTrack) {
       this.setTrack(nextTrack);
+      this.play();
     }
 
     return nextTrack;
   }
 
   async prev() {
-    const prevTrack = StateSelector.getPrevPlayTrack(this.getState());
+    const prevTrack = ModelSelector.getPrevPlayTrack(this.getState());
 
     if (prevTrack) {
       this.setTrack(prevTrack);
+      this.play();
     }
 
     return prevTrack;
   }
 
   setTrack(track: Track) {
-    if (track !== StateSelector.getPlayTrack(this.getState())) {
-      this.setState(state => StateMutation.setOrInitPlayTrack(state, track));
+    if (track !== ModelSelector.getPlayingTrack(this.getState())) {
+      this.setState(state => ModelMutation.setOrInitPlayTrack(state, track));
     }
 
-    return this.play();
+    this.playService.setTrack(track);
   }
 
-  getPlayinglist(): Playlist | null {
-    return this.getState().localPlaylists[0] || null;
+  setCurrentTime(currentTime: number) {
+    const track = ModelSelector.getPlayingTrack(this.getState());
+
+    if (track) {
+      this.setState(state =>
+        ModelMutation.setPlayerCurrentTime(state, currentTime)
+      );
+      this.playService.setTrack(track);
+      this.playService.setCurrentTime(currentTime);
+    }
   }
 }

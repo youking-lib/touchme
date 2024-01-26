@@ -2,11 +2,11 @@
 
 import { useMemo } from "react";
 
-import { StateMutation } from "../model";
+import { ModelMutation } from "../model";
 import { ExtraModifier } from "./utils-types";
 import { useSelector } from "./useSelector";
 
-type UseMutationReturn = ExtraModifier<typeof StateMutation>;
+type UseMutationReturn = ExtraModifier<typeof ModelMutation>;
 
 export function useMutation(): UseMutationReturn {
   const dispatch = useSelector((_, dispatch) => dispatch);
@@ -14,11 +14,11 @@ export function useMutation(): UseMutationReturn {
   return useMemo(() => {
     const modifier = {} as UseMutationReturn;
 
-    (Object.keys(StateMutation) as (keyof UseMutationReturn)[]).forEach(key => {
+    (Object.keys(ModelMutation) as (keyof UseMutationReturn)[]).forEach(key => {
       modifier[key] = (...args: any[]) => {
         dispatch(draft => {
           // @ts-ignore
-          return StateMutation[key](draft, ...args);
+          return ModelMutation[key](draft, ...args);
         });
       };
     });

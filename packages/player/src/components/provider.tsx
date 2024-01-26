@@ -27,6 +27,8 @@ export function Provider(
     setPlayer(instance);
 
     window["Player"] = instance;
+
+    return instance.init();
   }, []);
 
   useLayoutEffect(() => {

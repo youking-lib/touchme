@@ -1,24 +1,31 @@
 import React, { useState } from "react";
+import { Card, CardContent } from "@repo/ui/card";
+
 import { Provider } from "./provider";
 import { PlayerTabs } from "./player-tabs";
 import { PlayerControl } from "./player-control";
-import { Card, CardContent } from "@repo/ui/card";
+import { ModelSelector } from "../model";
+import { useSelector } from "../hooks";
 
 export function Main({ children }: React.PropsWithChildren): JSX.Element {
-  const [tabsOpen, setTabsOpen] = useState(true);
-
   return (
     <Provider>
-      <Card>
-        <CardContent className="ui-p-0 ui-w-[360px]">
-          <div className="ui-pb-2">
-            <PlayerControl
-              onMenuBtnClick={() => setTabsOpen(value => !value)}
-            />
-          </div>
-          {tabsOpen && <PlayerTabs />}
-        </CardContent>
-      </Card>
+      <Inner />
     </Provider>
+  );
+}
+
+function Inner() {
+  const playerTabsOpen = useSelector(ModelSelector.getPlayerTabsOpen);
+
+  return (
+    <Card>
+      <CardContent className="ui-p-0 ui-w-[360px]">
+        <div className="ui-pb-2">
+          <PlayerControl />
+        </div>
+        {playerTabsOpen && <PlayerTabs />}
+      </CardContent>
+    </Card>
   );
 }

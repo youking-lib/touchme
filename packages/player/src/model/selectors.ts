@@ -2,19 +2,31 @@ import { Track } from ".";
 import { PlayerState } from "./state";
 
 export const getDarkMode = (state: PlayerState) => state.darkMode;
-export const getPlaylists = (state: PlayerState) => state.playlists;
-export const getPlayQueue = (state: PlayerState) => state.playQueue;
-export const getPlayTrack = (state: PlayerState) => state.playTrack;
-export const getPlayStatus = (state: PlayerState) => state.playStatus;
+export const getPlayerTabsOpen = (state: PlayerState) => state.playerTabsOpen;
+export const getPlaylists = (state: PlayerState) => [
+  ...state.playlists,
+  ...state.localPlaylists,
+];
+export const getPlayingQueue = (state: PlayerState) => state.playingQueue;
+export const getPlayingTrack = (state: PlayerState) => state.playingTrack;
+export const getPlayingStatus = (state: PlayerState) => state.playingStatus;
+export const getPlayingCurrentTime = (state: PlayerState) =>
+  state.playingCurrentTime;
 
-export const getHasPlayTrack = (state: PlayerState, trackId: string) => {
-  const finded = state.playQueue?.tracks.find(item => item.id === trackId);
+export const getTrackInPlayingQueueById = (
+  state: PlayerState,
+  trackId: string
+) => {
+  const finded = state.playingQueue?.tracks.find(item => item.id === trackId);
   return Boolean(finded);
+};
+export const getPlaylistById = (state: PlayerState, id: string) => {
+  return getPlaylists(state).find(item => item.id === id);
 };
 
 export const getNextPlayTrack = (state: PlayerState) => {
-  const playQueue = getPlayQueue(state);
-  const playTrack = getPlayTrack(state);
+  const playQueue = getPlayingQueue(state);
+  const playTrack = getPlayingTrack(state);
 
   if (playTrack && playQueue) {
     const index = playQueue.tracks.findIndex(item => item.id === playTrack.id);
@@ -26,8 +38,8 @@ export const getNextPlayTrack = (state: PlayerState) => {
   return null;
 };
 export const getPrevPlayTrack = (state: PlayerState) => {
-  const playQueue = getPlayQueue(state);
-  const playTrack = getPlayTrack(state);
+  const playQueue = getPlayingQueue(state);
+  const playTrack = getPlayingTrack(state);
 
   if (playTrack && playQueue) {
     const index = playQueue.tracks.findIndex(item => item.id === playTrack.id);

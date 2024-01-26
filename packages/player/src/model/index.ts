@@ -1,4 +1,4 @@
 export * from "./type";
 export * from "./state";
-export * as StateMutation from "./mutations";
-export * as StateSelector from "./selectors";
+export * as ModelMutation from "./mutations";
+export * as ModelSelector from "./selectors";

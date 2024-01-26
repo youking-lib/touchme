@@ -1,6 +1,10 @@
 import { useCallback, useContext, useLayoutEffect, useState } from "react";
 import { PlayerContext } from "./context";
 
+export function usePlayer() {
+  return useContext(PlayerContext);
+}
+
 export function useLazyPlayer() {
   const player = useContext(PlayerContext);
   const [lazyer] = useState(() => {

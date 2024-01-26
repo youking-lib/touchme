@@ -13,9 +13,12 @@ export class PlayerState {
   playlists: Playlist[] = [];
   localPlaylists: Playlist[] = [];
 
-  playQueue: Playlist | null = null;
-  playTrack: Track | null = null;
-  playStatus: PlayerStatus = PlayerStatus.STOP;
+  playingQueue: Playlist | null = null;
+  playingTrack: Track | null = null;
+  playingStatus: PlayerStatus = PlayerStatus.STOP;
+  playingCurrentTime: number = 0;
+
+  playerTabsOpen = true;
 
   static set(state: PlayerState, recipe: (draft: PlayerState) => void) {
     const nextState = produce(state, draft => {

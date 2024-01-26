@@ -11,8 +11,38 @@ const playlistStorage = localforage.createInstance({
   name: "playlist",
 });
 
+enum StorageKey {
+  PlayingState = "PlayingState",
+}
+
+const defaultPlayState = {
+  playingQueueId: null as string | null,
+  playingTrackId: null as string | null,
+  playingCurrentTime: null as number | null,
+};
+
+const storage = localforage.createInstance({
+  name: "player",
+});
+
 export class LocalService {
   constructor(public api: Player) {}
+
+  async setPlayingState(value: Partial<typeof defaultPlayState>) {
+    const prev = await this.getPlayingState();
+
+    return storage.setItem(StorageKey.PlayingState, {
+      ...prev,
+      ...value,
+    });
+  }
+
+  async getPlayingState() {
+    const state = await storage.getItem<typeof defaultPlayState>(
+      StorageKey.PlayingState
+    );
+    return state || defaultPlayState;
+  }
 
   async getPlaylists() {
     const playlist: Playlist[] = [];
