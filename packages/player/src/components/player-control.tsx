@@ -22,8 +22,8 @@ export function PlayerControl({}: PlayerControlProps) {
   const album = playTrack?.album;
 
   return (
-    <div className="ui-flex ui-flex-col ui-py-1 ui-px-4">
-      <div>
+    <div className="ui-h-[150px] ui-flex ui-flex-col ui-py-1 ui-px-4">
+      <div className="ui-flex-1">
         <div className="ui-flex ui-h-5 ui-items-center ui-space-x-2 ui-text-xs ui-text-muted-foreground">
           <div>FLAC</div>
           <Separator orientation="vertical" />
@@ -49,7 +49,7 @@ export function PlayerControl({}: PlayerControlProps) {
 
       <PlayingProgress />
 
-      <div className="flex ui-justify-between">
+      <div className="ui-flex ui-justify-between">
         <Toggle
           data-state={playerTabsOpen ? "on" : "off"}
           onClick={() => {

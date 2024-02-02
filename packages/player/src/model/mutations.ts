@@ -59,3 +59,12 @@ export const setPlayerCurrentTime = (state: PlayerState, currentTime: number) =>
   PlayerState.set(state, draft => {
     draft.playingCurrentTime = currentTime;
   });
+
+export const setPlaylistName = (state: PlayerState, id: string, name: string) =>
+  PlayerState.set(state, draft => {
+    const playlist = ModelSelector.getPlaylistById(draft, id);
+
+    if (playlist) {
+      playlist.name = name;
+    }
+  });

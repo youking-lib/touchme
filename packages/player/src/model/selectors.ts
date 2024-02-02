@@ -13,6 +13,10 @@ export const getPlayingStatus = (state: PlayerState) => state.playingStatus;
 export const getPlayingCurrentTime = (state: PlayerState) =>
   state.playingCurrentTime;
 
+export const getIsLocalPlaylist = (state: PlayerState, id: string) => {
+  return Boolean(state.localPlaylists.find(item => item.id === id));
+};
+
 export const getTrackInPlayingQueueById = (
   state: PlayerState,
   trackId: string

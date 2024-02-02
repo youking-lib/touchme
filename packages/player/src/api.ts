@@ -2,13 +2,13 @@ import isFunction from "lodash/isFunction";
 import {
   PlayerState,
   PlayerStatus,
-  Playlist,
   ModelMutation,
   ModelSelector,
   Track,
 } from "./model";
 import { LocalService } from "./services/LocalService";
 import { PlayService } from "./services/PlayService";
+import { ApiService } from "./services/ApiService";
 import { ModelHelpers } from "./model-helpers";
 
 export type PlayerOptions = {
@@ -19,6 +19,7 @@ export type PlayerOptions = {
 export class Player {
   playService = new PlayService(this);
   localService = new LocalService(this);
+  apiService = new ApiService(this);
 
   constructor(public options: PlayerOptions) {}
 

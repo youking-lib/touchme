@@ -72,6 +72,7 @@ function TrackRow({ track, index, active }: TrackRowProps) {
           loader(player => {
             if (!active) {
               player.setTrack(track);
+              player.play();
             } else {
               player.playPause();
             }

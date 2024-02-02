@@ -65,6 +65,22 @@ export class LocalService {
     });
   }
 
+  async getPlaylist(id: string) {
+    const playlists = await this.getPlaylists();
+    return playlists.find(item => item.id === id);
+  }
+
+  async updatePlaylist(id: string, input: Partial<Playlist>) {
+    const playlist = await this.getPlaylist(id);
+
+    if (playlist) {
+      await playlistStorage.setItem<Playlist>(id, {
+        ...playlist,
+        ...input,
+      });
+    }
+  }
+
   importFiles(files: File[]) {
     const tracks = files.map(file => {
       return this.parseMusicMetadata(file);
