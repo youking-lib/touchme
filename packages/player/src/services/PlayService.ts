@@ -1,6 +1,6 @@
 import { Player } from "../api";
 import { Track } from "../model";
-import { parseUri } from "../utils";
+import { parseTrackUri, parseUri } from "../utils";
 
 export class PlayService {
   private audio: HTMLAudioElement = new Audio();
@@ -52,10 +52,12 @@ export class PlayService {
     this.audio.volume = volume;
   }
 
-  setTrack(track: Track) {
+  async setTrack(track: Track) {
     if (this.track !== track) {
+      const path = await parseTrackUri(track);
+
       this.track = track;
-      this.audio.src = track.path;
+      this.audio.src = path;
     }
   }
 

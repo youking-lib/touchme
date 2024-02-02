@@ -43,6 +43,8 @@ function Title({ playlist }: PlayerlistItemProps) {
     }
   }, [isEditing]);
 
+  const title = playlist.name || "Playlist";
+
   return (
     <>
       {isEditing ? (
@@ -63,10 +65,10 @@ function Title({ playlist }: PlayerlistItemProps) {
               setIsEditing(false);
             }
           }}
-          defaultValue={playlist.name}
+          defaultValue={title}
         />
       ) : (
-        <span onDoubleClick={() => setIsEditing(true)}>{playlist.name}</span>
+        <span onDoubleClick={() => setIsEditing(true)}>{title}</span>
       )}
     </>
   );

@@ -71,14 +71,11 @@ export class Player {
 
     if (!track) return;
 
-    const formatedTrack = await formatTrack(track);
-
     if (track.id !== playingTrack?.id) {
       this.setState(state => ModelMutation.setOrInitPlayTrack(state, track));
     }
 
-    this.playService.setTrack(formatedTrack);
-
+    await this.playService.setTrack(track);
     await this.playService.play();
 
     this.setState(state =>
@@ -114,14 +111,15 @@ export class Player {
     return prevTrack;
   }
 
-  setCurrentTime(currentTime: number) {
+  async setCurrentTime(currentTime: number) {
     const track = ModelSelector.getPlayingTrack(this.getState());
 
     if (track) {
       this.setState(state =>
         ModelMutation.setPlayerCurrentTime(state, currentTime)
       );
-      this.playService.setTrack(track);
+
+      await this.playService.setTrack(track);
       this.playService.setCurrentTime(currentTime);
     }
   }
