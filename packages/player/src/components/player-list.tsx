@@ -30,14 +30,8 @@ function UploadLocal() {
   const props: UploadProps = {
     async onBatchStart(files) {
       const player = await loader();
-      const tracks = await player.localService.importFiles(
-        files.map(item => item.file)
-      );
 
-      await player.localService.createPlaylist({
-        name: "Unknown Playlist",
-        tracks,
-      });
+      await player.localService.importFiles(files.map(item => item.file));
 
       const playlists = await player.localService.getPlaylists();
 

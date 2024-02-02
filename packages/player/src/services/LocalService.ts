@@ -4,7 +4,7 @@ import localforage from "localforage";
 import { parseBlob } from "music-metadata-browser";
 
 import { Player } from "../api";
-import { Track, Playlist } from "../model";
+import { Track, Playlist, FileTrack } from "../model";
 import { readImageAsBase64 } from "../utils";
 
 const playlistStorage = localforage.createInstance({
@@ -45,15 +45,15 @@ export class LocalService {
   }
 
   async getPlaylists() {
-    const playlist: Playlist[] = [];
+    const playlists: Playlist[] = [];
 
     await playlistStorage.iterate<Playlist, void>(value => {
       if (value) {
-        playlist.push(value);
+        playlists.push(value);
       }
     });
 
-    return playlist;
+    return playlists;
   }
 
   createPlaylist(playlist: Omit<Playlist, "id">) {
@@ -81,15 +81,19 @@ export class LocalService {
     }
   }
 
-  importFiles(files: File[]) {
-    const tracks = files.map(file => {
-      return this.parseMusicMetadata(file);
+  async importFiles(files: File[]) {
+    const promises = files.map(file => this.parseMusicMetadata(file));
+    const tracks = await Promise.all(promises);
+
+    const playlist = this.createPlaylist({
+      name: "",
+      tracks,
     });
 
-    return Promise.all(tracks);
+    return playlist;
   }
 
-  async parseMusicMetadata(file: File): Promise<Track> {
+  async parseMusicMetadata(file: File): Promise<FileTrack> {
     const { common, format, native, quality } = await parseBlob(file);
 
     console.log(native, quality, common, format);
@@ -108,13 +112,12 @@ export class LocalService {
       year: common.year,
     };
 
-    const { src } = await readImageAsBase64(file);
     const id = nanoid();
 
     return {
       ...this.getDefaultMetadata(),
       ...pickBy(metadata),
-      path: src,
+      file,
       id,
     };
   }

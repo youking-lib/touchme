@@ -1,5 +1,6 @@
 import { Player } from "../api";
 import { Track } from "../model";
+import { parseUri } from "../utils";
 
 export class PlayService {
   private audio: HTMLAudioElement = new Audio();

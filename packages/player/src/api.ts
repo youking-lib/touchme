@@ -10,6 +10,7 @@ import { LocalService } from "./services/LocalService";
 import { PlayService } from "./services/PlayService";
 import { ApiService } from "./services/ApiService";
 import { ModelHelpers } from "./model-helpers";
+import { formatTrack } from "./utils/formatTrack";
 
 export type PlayerOptions = {
   state: PlayerState;
@@ -64,14 +65,20 @@ export class Player {
     }
   }
 
-  async play() {
-    const track = ModelSelector.getPlayingTrack(this.getState());
+  async play(inputTrack?: Track) {
+    const playingTrack = ModelSelector.getPlayingTrack(this.getState());
+    const track = inputTrack || playingTrack;
 
-    if (!track) {
-      return;
+    if (!track) return;
+
+    const formatedTrack = await formatTrack(track);
+
+    if (track.id !== playingTrack?.id) {
+      this.setState(state => ModelMutation.setOrInitPlayTrack(state, track));
     }
 
-    this.setTrack(track);
+    this.playService.setTrack(formatedTrack);
+
     await this.playService.play();
 
     this.setState(state =>
@@ -91,8 +98,7 @@ export class Player {
     const nextTrack = ModelSelector.getNextPlayTrack(this.getState());
 
     if (nextTrack) {
-      this.setTrack(nextTrack);
-      this.play();
+      this.play(nextTrack);
     }
 
     return nextTrack;
@@ -102,19 +108,10 @@ export class Player {
     const prevTrack = ModelSelector.getPrevPlayTrack(this.getState());
 
     if (prevTrack) {
-      this.setTrack(prevTrack);
-      this.play();
+      this.play(prevTrack);
     }
 
     return prevTrack;
-  }
-
-  setTrack(track: Track) {
-    if (track !== ModelSelector.getPlayingTrack(this.getState())) {
-      this.setState(state => ModelMutation.setOrInitPlayTrack(state, track));
-    }
-
-    this.playService.setTrack(track);
   }
 
   setCurrentTime(currentTime: number) {
