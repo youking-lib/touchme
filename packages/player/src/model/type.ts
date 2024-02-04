@@ -2,10 +2,6 @@ export interface Track {
   id: string;
   album: string;
   artist: string[];
-  disk: {
-    no: number;
-    of: number;
-  };
   duration: number;
   genre: string[];
   loweredMetas: {

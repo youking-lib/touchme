@@ -5,7 +5,8 @@
     "**/*.css"
   ],
   "exports": {
-    "./libs": "./src/libs/index.ts"
+    "./libs": "./src/libs/index.ts",
+    "./constants": "./src/constants/index.ts"
   },
   "license": "MIT",
   "scripts": {},
