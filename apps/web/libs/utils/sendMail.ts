@@ -1,4 +1,4 @@
-import { EmailContants } from '@/libs/constant'
+import { EmailContants } from "@/libs/constant";
 import nodemailer from "nodemailer";
 
 type SendMailOptions = {
@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 
 export function sendMail(options: SendMailOptions) {
   return transporter.sendMail({
-    from: "touchme-noreply@touchme.pro",
+    from: EmailContants.FROM,
     ...options,
   });
 }
