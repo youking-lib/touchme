@@ -105,6 +105,9 @@ importers:
       lucia:
         specifier: ^3.0.1
         version: 3.0.1
+      nanoid:
+        specifier: ^5.0.4
+        version: 5.0.4
       next:
         specifier: ^14.0.4
         version: 14.0.4(react-dom@18.2.0)(react@18.2.0)
@@ -314,7 +317,7 @@ importers:
         version: 18.2.46
       tsup:
         specifier: ^8.0.1
-        version: 8.0.1(postcss@8.4.33)(typescript@5.3.3)
+        version: 8.0.1(postcss@8.4.32)(typescript@5.3.3)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -433,7 +436,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.1
-        version: 8.0.1(postcss@8.4.33)(typescript@5.3.3)
+        version: 8.0.1(postcss@8.4.32)(typescript@5.3.3)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3

@@ -35,8 +35,34 @@ CREATE TABLE `EmailVerificationCode` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `File` (
+    `id` VARCHAR(191) NOT NULL,
+    `filename` VARCHAR(191) NOT NULL,
+    `size` DOUBLE NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `filepathId` VARCHAR(191) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `FilePath` (
+    `id` VARCHAR(191) NOT NULL,
+    `path` VARCHAR(191) NOT NULL,
+    `hash` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `Session` ADD CONSTRAINT `Session_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `EmailVerificationCode` ADD CONSTRAINT `EmailVerificationCode_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `File` ADD CONSTRAINT `File_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `File` ADD CONSTRAINT `File_filepathId_fkey` FOREIGN KEY (`filepathId`) REFERENCES `FilePath`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

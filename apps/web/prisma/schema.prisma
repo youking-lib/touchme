@@ -21,6 +21,7 @@ model User {
   // auth
   Session               Session[]
   EmailVerificationCode EmailVerificationCode[]
+  File                  File[]
 }
 
 model Session {
@@ -44,4 +45,23 @@ model EmailVerificationCode {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model File {
+  id       String @id @default(cuid())
+  filename String
+  size     Float
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  filepath   FilePath? @relation(fields: [filepathId], references: [id])
+  filepathId String?
+}
+
+model FilePath {
+  id   String @id @default(cuid())
+  path String // aws s3 path
+  hash String // file md5 hash
+  File File[]
 }
