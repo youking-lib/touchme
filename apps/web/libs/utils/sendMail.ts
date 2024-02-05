@@ -1,3 +1,4 @@
+import { EmailContants } from '@/libs/constant'
 import nodemailer from "nodemailer";
 
 type SendMailOptions = {
@@ -7,12 +8,12 @@ type SendMailOptions = {
 };
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.feishu.cn",
-  port: 465,
+  host: EmailContants.HOST,
+  port: EmailContants.PORT,
   secure: true,
   auth: {
-    user: "touchme-noreply@microvoid.io",
-    pass: "GRZ5yXbuzoIykV6f",
+    user: EmailContants.AUTH_USER,
+    pass: EmailContants.AUTH_PASS,
   },
 });
 
