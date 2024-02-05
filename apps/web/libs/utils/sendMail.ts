@@ -1,5 +1,5 @@
 import { EmailContants } from "@/libs/constant";
-import nodemailer from "nodemailer";
+import { createTransport } from "nodemailer";
 
 type SendMailOptions = {
   to: string;
@@ -7,9 +7,9 @@ type SendMailOptions = {
   html: string;
 };
 
-const transporter = nodemailer.createTransport({
+const transporter = createTransport({
   host: EmailContants.HOST,
-  port: EmailContants.PORT,
+  port: Number(EmailContants.PORT),
   secure: true,
   auth: {
     user: EmailContants.AUTH_USER,
