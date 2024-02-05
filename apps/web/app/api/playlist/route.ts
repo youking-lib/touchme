@@ -1,22 +1,31 @@
 import { NextRequest } from "next/server";
-import { array, number, object, string } from "zod";
-import { invalidBody } from "@/libs/http";
+import { object, string } from "zod";
 
-const PlaylistValidatorSchema = {
+import { invalidBody, success } from "@/libs/http";
+import { prisma } from "@/libs/prisma";
+import { getSessionUser } from "@/libs/auth";
+
+const ValidatorSchema = {
   post: object({
-    album: string(),
-    artist: array(string()),
-    duration: number(),
-    genre: array(string()),
-    title: string(),
+    name: string(),
   }),
 };
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const validation = PlaylistValidatorSchema.post.safeParse(body);
+  const validation = ValidatorSchema.post.safeParse(body);
 
   if (!validation.success) {
     return invalidBody();
   }
+
+  const loginUser = await getSessionUser();
+  const playlist = await prisma.playlist.create({
+    data: {
+      name: validation.data.name,
+      userId: loginUser?.id,
+    },
+  });
+
+  return success(playlist);
 };

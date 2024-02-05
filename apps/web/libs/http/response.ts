@@ -27,6 +27,15 @@ export const notAllowed = () => {
   );
 };
 
+export const notFound = () => {
+  return Response.json(
+    { error: Errors.NotFound, success: false },
+    {
+      status: 404,
+    }
+  );
+};
+
 export const success = (data?: object | null, init?: ResponseInit) => {
   return Response.json(
     {
