@@ -1,4 +1,10 @@
-import { PlayerStatus, Playlist, ModelSelector, Track } from ".";
+import {
+  PlayerStatus,
+  Playlist,
+  ModelSelector,
+  Track,
+  UploadQueueStatus,
+} from ".";
 import { PlayerState } from "./state";
 
 export const setDarkMode = (state: PlayerState) =>
@@ -68,3 +74,67 @@ export const setPlaylistName = (state: PlayerState, id: string, name: string) =>
       playlist.name = name;
     }
   });
+
+export const addUploadTask = (
+  state: PlayerState,
+  localPlaylistId: string,
+  targetPlaylistId: string
+) => {
+  const playlist = ModelSelector.getPlaylistById(state, localPlaylistId);
+
+  if (!playlist) {
+    return state;
+  }
+
+  return PlayerState.set(state, draft => {
+    draft.uploadTask.push({
+      targetPlaylistId,
+      localPlaylistId: playlist.id,
+      queue: playlist.tracks.map(item => {
+        return {
+          id: item.id,
+          progress: 0,
+          status: "pending",
+        };
+      }),
+    });
+  });
+};
+
+export const setUploadTrackStatus = (
+  state: PlayerState,
+  taskId: string,
+  queueItemId: string,
+  status: UploadQueueStatus
+) => {
+  return PlayerState.set(state, draft => {
+    const queueItem = ModelSelector.getUploadQueueItemById(
+      state,
+      taskId,
+      queueItemId
+    );
+
+    if (queueItem) {
+      queueItem.status = status;
+    }
+  });
+};
+
+export const setUploadTrackProgress = (
+  state: PlayerState,
+  taskId: string,
+  queueItemId: string,
+  progress: number
+) => {
+  return PlayerState.set(state, draft => {
+    const queueItem = ModelSelector.getUploadQueueItemById(
+      state,
+      taskId,
+      queueItemId
+    );
+
+    if (queueItem) {
+      queueItem.progress = progress;
+    }
+  });
+};

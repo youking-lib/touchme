@@ -28,6 +28,18 @@ export const getPlaylistById = (state: PlayerState, id: string) => {
   return getPlaylists(state).find(item => item.id === id);
 };
 
+export const getUploadTaskById = (state: PlayerState, id: string) =>
+  state.uploadTask.find(item => item.localPlaylistId === id);
+
+export const getUploadQueueItemById = (
+  state: PlayerState,
+  taskId: string,
+  queueItemId: string
+) => {
+  const task = getUploadTaskById(state, taskId);
+  return task && task.queue.find(item => item.id === queueItemId);
+};
+
 export const getNextPlayTrack = (state: PlayerState) => {
   const playQueue = getPlayingQueue(state);
   const playTrack = getPlayingTrack(state);

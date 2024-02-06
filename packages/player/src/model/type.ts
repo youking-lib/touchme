@@ -38,3 +38,15 @@ export enum PlayerStatus {
   PAUSE = "pause",
   STOP = "stop",
 }
+
+export interface UploadTask {
+  localPlaylistId: string;
+  targetPlaylistId: string;
+  queue: {
+    id: string;
+    progress: number;
+    status: UploadQueueStatus;
+  }[];
+}
+
+export type UploadQueueStatus = "pending" | "uploading" | "resolve" | "reject";

@@ -6,7 +6,7 @@ export const CloudflareR2Constants = {
   R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID!,
   R2_BUCKET_NAME: process.env.R2_BUCKET_NAME!,
 
-  BASE_PATH: "/static/music/",
+  BASE_PATH: "static/music/",
 };
 
 export const EmailContants = {

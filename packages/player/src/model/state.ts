@@ -1,5 +1,5 @@
 import { immerable, produce } from "immer";
-import { PlayerStatus, Playlist, Track } from ".";
+import { PlayerStatus, Playlist, Track, UploadTask } from ".";
 
 export class PlayerState {
   [immerable] = true;
@@ -19,6 +19,8 @@ export class PlayerState {
   playingCurrentTime: number = 0;
 
   playerTabsOpen = true;
+
+  uploadTask: UploadTask[] = [];
 
   static set(state: PlayerState, recipe: (draft: PlayerState) => void) {
     const nextState = produce(state, draft => {

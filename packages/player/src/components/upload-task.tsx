@@ -5,9 +5,12 @@ export function UploadTask() {
   const { toast } = useToast();
 
   useEffect(() => {
-    toast({
-      title: "Progress [2/10]",
-      description: "Playlist [music.flac] 80%",
+    // @ts-ignore
+    window["toast"] = toast;
+
+    const res = toast({
+      title: "Upload Progress Playlist",
+      description: "[2/10] [music.flac] 80%",
     });
   }, []);
 
