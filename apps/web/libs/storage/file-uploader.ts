@@ -32,7 +32,9 @@ export async function getOrSignFileHash(hash: string, filename: string) {
 
   if (fileHash) {
     return {
-      fileHash,
+      id: fileHash.id,
+      key: fileHash.key,
+      hash: fileHash.hash,
       signedUrl: null,
     };
   }
@@ -49,10 +51,9 @@ export async function getOrSignFileHash(hash: string, filename: string) {
   );
 
   return {
-    fileHash: {
-      hash,
-      key: Key,
-    },
+    id: null,
+    hash,
+    key: Key,
     signedUrl,
   };
 }

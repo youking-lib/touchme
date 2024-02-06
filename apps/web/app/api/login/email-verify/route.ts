@@ -1,20 +1,14 @@
 import { NextRequest } from "next/server";
-import { object, string } from "zod";
 import { renderLoginCode } from "@repo/email";
 import { prisma } from "@/libs/prisma";
 import { sendMail } from "@/libs/utils";
 import { invalidBody, success } from "@/libs/http";
 import { genEmailVerificationCode } from "@/libs/auth";
-
-const Validator = {
-  post: object({
-    email: string(),
-  }),
-};
+import { EmailVerifyPostValidator } from "@repo/schema";
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const validation = Validator.post.safeParse(body);
+  const validation = EmailVerifyPostValidator.safeParse(body);
 
   if (!validation.success) {
     return invalidBody();

@@ -1,18 +1,11 @@
 import { checkEmailVerificationCode, lucia } from "@/libs/auth";
 import { invalidBody, notAllowed, success } from "@/libs/http";
+import { EmailSignInPostValidator } from "@repo/schema";
 import { NextRequest } from "next/server";
-import { object, string } from "zod";
-
-const Validator = {
-  post: object({
-    email: string(),
-    code: string(),
-  }),
-};
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const validation = Validator.post.safeParse(body);
+  const validation = EmailSignInPostValidator.safeParse(body);
 
   if (!validation.success) {
     return invalidBody();

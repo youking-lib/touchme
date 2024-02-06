@@ -1,26 +1,17 @@
 import { NextRequest } from "next/server";
 import { invalidBody, notFound, success } from "@/libs/http";
-
-import { array, number, object, string } from "zod";
+import {
+  PlaylistAddTrackPostValidator,
+  PlaylistAddTrackPostOutput,
+} from "@repo/schema";
 import { prisma } from "@/libs/prisma";
-import { trackFieldEncode } from "./format";
 
-const ValidatorSchema = {
-  post: object({
-    playlistId: string(),
-    album: string(),
-    artist: array(string()),
-    duration: number(),
-    genre: array(string()).default([]),
-    title: string(),
-    fileId: string(),
-  }),
-};
+import { trackFieldEncode } from "./format";
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
 
-  const validation = ValidatorSchema.post.safeParse(body);
+  const validation = PlaylistAddTrackPostValidator.safeParse(body);
 
   if (!validation.success) {
     return invalidBody();
@@ -36,7 +27,7 @@ export const POST = async (req: NextRequest) => {
     return notFound();
   }
 
-  const track = await prisma.playlistTrack.create({
+  const track: PlaylistAddTrackPostOutput = await prisma.playlistTrack.create({
     data: {
       playlistId: validation.data.playlistId,
       album: validation.data.album,
