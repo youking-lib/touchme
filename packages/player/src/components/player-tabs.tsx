@@ -1,6 +1,5 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
+import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui";
 import { PlayerList } from "./player-list";
-import { Icon } from "@repo/ui/icon";
 
 export function PlayerTabs() {
   return (

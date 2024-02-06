@@ -1,16 +1,16 @@
-import { Icon } from "@repo/ui/icon";
 import {
+  Icon,
   Table,
   TableBody,
   TableCaption,
   TableCell,
   TableRow,
-} from "@repo/ui/table";
+} from "@repo/ui";
 import { clsx } from "clsx";
 
 import { useSelector, useLazyPlayer } from "../hooks";
 import { Playlist, ModelSelector, Track } from "../model";
-import { PlayerlistItem } from "./player-list-item";
+import { PlayerlistItem, getTitle } from "./player-list-item";
 
 export function PlayerTracks({ playlist }: { playlist: Playlist }) {
   const tracks = playlist.tracks || [];
@@ -28,8 +28,9 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
         </colgroup>
 
         <TableCaption className="ui-text-xs">
-          {playlist.name}|{tracks.length} Tracks
+          {getTitle(playlist)}|{tracks.length} Tracks
         </TableCaption>
+
         <TableBody>
           {tracks.map((track, index) => {
             return (

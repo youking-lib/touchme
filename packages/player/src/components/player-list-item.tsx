@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Icon } from "@repo/ui/icon";
+import { Icon } from "@repo/ui";
 
 import { usePlayer } from "../hooks";
 import { Playlist } from "../model";
@@ -9,23 +9,37 @@ type PlayerlistItemProps = {
 };
 
 export function PlayerlistItem({ playlist }: PlayerlistItemProps) {
+  const api = usePlayer();
+
   return (
-    <div className="ui-py-4 ui-px-2 ui-flex ui-items-center ui-border-b ui-border-t ui-space-x-1">
-      <div className="ui-cursor-pointer">
+    <div className="ui-flex ui-items-center ui-border-b ui-border-t ui-space-x-1 ui-py-4 ui-px-2">
+      <div className="ui-flex-none ui-cursor-pointer">
         <Icon name="ChevronLeft" size={24} />
       </div>
 
-      <div>
-        <Icon name="DiscAlbum" size={48} />
+      <div className="ui-grow ui-flex ui-items-center ui-space-x-1">
+        <div>
+          <Icon name="DiscAlbum" size={48} />
+        </div>
+
+        <div>
+          <div className="ui-text-foreground ui-font-bold">
+            <Title playlist={playlist} />
+          </div>
+
+          <div className="ui-text-secondray ui-text-xs">
+            {playlist.tracks.length} Tracks
+          </div>
+        </div>
       </div>
 
-      <div>
-        <div className="ui-text-foreground ui-font-bold">
-          <Title playlist={playlist} />
-        </div>
-        <div className="ui-text-secondray ui-text-xs">
-          {playlist.tracks.length} Tracks
-        </div>
+      <div
+        className="ui-flex-none ui-cursor-pointer"
+        onClick={() => {
+          api?.apiService.uploadPlaylist(playlist.id);
+        }}
+      >
+        <Icon name="UploadCloud" size={16} />
       </div>
     </div>
   );
@@ -43,7 +57,7 @@ function Title({ playlist }: PlayerlistItemProps) {
     }
   }, [isEditing]);
 
-  const title = playlist.name || "Playlist";
+  const title = getTitle(playlist);
 
   return (
     <>
@@ -53,12 +67,13 @@ function Title({ playlist }: PlayerlistItemProps) {
           autoFocus
           className="ui-border-none ui-bg-transparent ui-outline-none"
           onBlur={() => setIsEditing(false)}
-          onKeyDown={(e: React.KeyboardEvent) => {
+          onKeyDown={async (e: React.KeyboardEvent) => {
             const target = e.target as HTMLInputElement;
             const value = target.value;
 
             if (e.key === "Enter") {
-              player?.apiService.updatePlaylistName(playlist.id, value);
+              await player?.apiService.updatePlaylistName(playlist.id, value);
+              setIsEditing(false);
             }
 
             if (e.key === "Escape") {
@@ -73,3 +88,7 @@ function Title({ playlist }: PlayerlistItemProps) {
     </>
   );
 }
+
+export const getTitle = (playlist: Playlist) => {
+  return playlist.name || "Playlist";
+};

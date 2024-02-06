@@ -1,4 +1,4 @@
-import { Icon } from "@repo/ui/icon";
+import { Icon } from "@repo/ui";
 import Upload, { UploadProps } from "rc-upload";
 
 import { useSelector, useMutation, useLazyPlayer } from "../hooks";

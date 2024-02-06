@@ -1,9 +1,12 @@
 import { useRef } from "react";
-import { Icon } from "@repo/ui/icon";
-import { ToggleGroup, ToggleGroupItem } from "@repo/ui/toggle-group";
-import { Toggle } from "@repo/ui/toggle";
-import { Slider } from "@repo/ui/slider";
-import { Separator } from "@repo/ui/separator";
+import {
+  Icon,
+  ToggleGroup,
+  ToggleGroupItem,
+  Toggle,
+  Slider,
+  Separator,
+} from "@repo/ui";
 
 import { useLazyPlayer, useMutation, useSelector } from "../hooks";
 import { ModelSelector, PlayerStatus } from "../model";
