@@ -1,5 +1,5 @@
-import fetch from "axios";
-import chunk from "lodash/chunk";
+import axios from "axios";
+import { md5 } from "js-md5";
 
 import { Player } from "../api";
 import { FileTrack, ModelMutation, ModelSelector, Playlist } from "../model";
@@ -35,7 +35,7 @@ export class ApiService {
       id
     );
 
-    const res = await fetch<Playlist>({
+    const res = await axios<Playlist>({
       url: "/api/playlist",
       method: "POST",
       data: {
@@ -53,7 +53,7 @@ export class ApiService {
     )!;
     const tracks = localPlaylist!.tracks as FileTrack[];
 
-    this.uploadFile(tracks[0].file);
+    this.uploadFile(tracks[1].file);
 
     // while (index++ < chunks.length) {
 
@@ -61,17 +61,37 @@ export class ApiService {
   }
 
   async uploadFile(file: File) {
-    const form = new FormData();
+    const buffer = await file.arrayBuffer();
+    const hash = md5(buffer);
 
-    form.append("file", file);
+    // const response = await axios<{
+    //   data: { id: string; key: string };
+    //   success: boolean;
+    // }>(`/api/file/upload`, {
+    //   method: "POST",
+    //   data: form,
+    // });
 
-    const response = await fetch<{
-      data: { id: string; key: string };
-      success: boolean;
-    }>(`/api/file/upload`, {
-      method: "POST",
-      data: form,
+    const response = await axios<{ data: { signedUrl: string } }>(
+      "/api/file/hash-sign",
+      {
+        method: "POST",
+        data: {
+          hash,
+          filename: file.name,
+        },
+      }
+    );
+
+    const res = await axios(response.data.data.signedUrl, {
+      method: "PUT",
+      data: file,
+      headers: { "Content-Type": file.type },
     });
+
+    if (res.status !== 200) {
+      throw new Error("upload error");
+    }
 
     return response.data;
   }

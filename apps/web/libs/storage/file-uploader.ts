@@ -23,12 +23,38 @@ export async function upload(file: File, userId?: string) {
   });
 }
 
-export async function sign(Key: string) {
-  return await getSignedUrl(
+export async function getOrSignFileHash(hash: string, filename: string) {
+  const fileHash = await prisma.fileHash.findUnique({
+    where: {
+      hash,
+    },
+  });
+
+  if (fileHash) {
+    return {
+      fileHash,
+      signedUrl: null,
+    };
+  }
+
+  const Key = path.join(
+    CloudflareR2Constants.BASE_PATH,
+    `${nanoid()}${path.extname(filename)}`
+  );
+
+  const signedUrl = await getSignedUrl(
     client,
-    new GetObjectCommand({ Bucket: CloudflareR2Constants.R2_BUCKET_NAME, Key }),
+    new PutObjectCommand({ Bucket: CloudflareR2Constants.R2_BUCKET_NAME, Key }),
     { expiresIn: 3600 }
   );
+
+  return {
+    fileHash: {
+      hash,
+      key: Key,
+    },
+    signedUrl,
+  };
 }
 
 async function getOrUploadFile(file: File) {
