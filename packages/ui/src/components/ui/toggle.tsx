@@ -7,18 +7,18 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@repo/utils/libs"
 
 const toggleVariants = cva(
-  "ui-inline-flex ui-items-center ui-justify-center ui-rounded-md ui-text-sm ui-font-medium ui-transition-colors hover:ui-bg-muted hover:ui-text-muted-foreground focus-visible:ui-outline-none focus-visible:ui-ring-1 focus-visible:ui-ring-ring disabled:ui-pointer-events-none disabled:ui-opacity-50 data-[state=on]:ui-bg-accent data-[state=on]:ui-text-accent-foreground",
+  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
   {
     variants: {
       variant: {
-        default: "ui-bg-transparent",
+        default: "bg-transparent",
         outline:
-          "ui-border ui-border-input ui-bg-transparent ui-shadow-sm hover:ui-bg-accent hover:ui-text-accent-foreground",
+          "border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
       },
       size: {
-        default: "ui-h-9 ui-px-3",
-        sm: "ui-h-8 ui-px-2",
-        lg: "ui-h-10 ui-px-3",
+        default: "h-9 px-3",
+        sm: "h-8 px-2",
+        lg: "h-10 px-3",
       },
     },
     defaultVariants: {
