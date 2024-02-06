@@ -17,7 +17,7 @@ export function PlayerList() {
   const playlist = playlists[0];
 
   return (
-    <div className="ui-min-h-[200px] ui-pb-2">
+    <div className="min-h-[200px] pb-2">
       {playlist && <PlayerTracks playlist={playlist} />}
     </div>
   );
@@ -45,12 +45,12 @@ function UploadLocal() {
 
   return (
     <Upload
-      className="ui-min-h-[200px] ui-rounded-xl ui-border ui-border-dashed ui-flex ui-items-center ui-justify-center ui-flex-col ui-space-y-4 ui-text-muted-foreground"
+      className="min-h-[200px] rounded-xl border border-dashed flex items-center justify-center flex-col space-y-4 text-muted-foreground"
       {...props}
     >
       <Icon name="Upload" size={24} />
 
-      <p className="ui-text-xs">Drag local music files to this area</p>
+      <p className="text-xs">Drag local music files to this area</p>
     </Upload>
   );
 }

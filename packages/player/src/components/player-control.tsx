@@ -25,9 +25,9 @@ export function PlayerControl({}: PlayerControlProps) {
   const album = playTrack?.album;
 
   return (
-    <div className="ui-h-[150px] ui-flex ui-flex-col ui-py-1 ui-px-4">
-      <div className="ui-flex-1">
-        <div className="ui-flex ui-h-5 ui-items-center ui-space-x-2 ui-text-xs ui-text-muted-foreground">
+    <div className="h-[150px] flex flex-col py-1 px-4">
+      <div className="flex-1">
+        <div className="flex h-5 items-center space-x-2 text-xs text-muted-foreground">
           <div>FLAC</div>
           <Separator orientation="vertical" />
           <div>874kbps</div>
@@ -37,13 +37,11 @@ export function PlayerControl({}: PlayerControlProps) {
           <div>44.1kHz</div>
         </div>
 
-        <Separator className="ui-mb-4 ui-mt-1" />
+        <Separator className="mb-4 mt-1" />
 
-        <div className="ui-space-y-2">
-          <h4 className="ui-font-medium ui-leading-none">
-            {playTrack?.title || ""}
-          </h4>
-          <p className="ui-text-xs ui-text-muted-foreground">
+        <div className="space-y-2">
+          <h4 className="font-medium leading-none">{playTrack?.title || ""}</h4>
+          <p className="text-xs text-muted-foreground">
             {artist && <span>@{artist}|</span>}
             {album}
           </p>
@@ -52,7 +50,7 @@ export function PlayerControl({}: PlayerControlProps) {
 
       <PlayingProgress />
 
-      <div className="ui-flex ui-justify-between">
+      <div className="flex justify-between">
         <Toggle
           data-state={playerTabsOpen ? "on" : "off"}
           onClick={() => {
@@ -116,7 +114,7 @@ function PlayingProgress() {
   return (
     <Slider
       ref={ref}
-      className="ui-my-2"
+      className="my-2"
       max={track?.duration}
       value={[playingCurrentTime]}
     />

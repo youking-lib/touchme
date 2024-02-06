@@ -23,8 +23,8 @@ function Inner() {
 
   return (
     <Card>
-      <CardContent className="ui-p-0 ui-w-[360px]">
-        <div className="ui-pb-2">
+      <CardContent className="p-0 w-[360px]">
+        <div className="pb-2">
           <PlayerControl />
         </div>
         {playerTabsOpen && <PlayerTabs />}

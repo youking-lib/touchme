@@ -17,17 +17,17 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
   const playTrack = useSelector(ModelSelector.getPlayingTrack);
 
   return (
-    <div className="ui-text-muted-foreground">
+    <div className="text-muted-foreground">
       <PlayerlistItem playlist={playlist} />
 
-      <Table className="ui-text-xs ui-table-fixed">
+      <Table className="text-xs table-fixed">
         <colgroup>
           <col width="2" />
           <col width="14" />
           <col width="6" />
         </colgroup>
 
-        <TableCaption className="ui-text-xs">
+        <TableCaption className="text-xs">
           {getTitle(playlist)}|{tracks.length} Tracks
         </TableCaption>
 
@@ -58,15 +58,15 @@ function TrackRow({ track, index, active }: TrackRowProps) {
   const loader = useLazyPlayer();
 
   return (
-    <TableRow className={clsx({ ["ui-text-foreground"]: active })}>
+    <TableRow className={clsx({ ["text-foreground"]: active })}>
       <TableCell className="">
         {active ? <Icon name="Activity" /> : `${index + 1}.`}
       </TableCell>
       <TableCell
         className={clsx(
-          "ui-text-ellipsis ui-text-nowrap ui-overflow-hidden hover:ui-underline ui-cursor-pointer",
+          "text-ellipsis text-nowrap overflow-hidden hover:underline cursor-pointer",
           {
-            "ui-underline": active,
+            underline: active,
           }
         )}
         onClick={() => {
@@ -81,7 +81,7 @@ function TrackRow({ track, index, active }: TrackRowProps) {
       >
         {track.title}
       </TableCell>
-      <TableCell className="ui-text-right">{track.artist[0]}</TableCell>
+      <TableCell className="text-right">{track.artist[0]}</TableCell>
     </TableRow>
   );
 }

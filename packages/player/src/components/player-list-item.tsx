@@ -12,29 +12,29 @@ export function PlayerlistItem({ playlist }: PlayerlistItemProps) {
   const api = usePlayer();
 
   return (
-    <div className="ui-flex ui-items-center ui-border-b ui-border-t ui-space-x-1 ui-py-4 ui-px-2">
-      <div className="ui-flex-none ui-cursor-pointer">
+    <div className="flex items-center border-b border-t space-x-1 py-4 px-2">
+      <div className="flex-none cursor-pointer">
         <Icon name="ChevronLeft" size={24} />
       </div>
 
-      <div className="ui-grow ui-flex ui-items-center ui-space-x-1">
+      <div className="grow flex items-center space-x-1">
         <div>
           <Icon name="DiscAlbum" size={48} />
         </div>
 
         <div>
-          <div className="ui-text-foreground ui-font-bold">
+          <div className="text-foreground font-bold">
             <Title playlist={playlist} />
           </div>
 
-          <div className="ui-text-secondray ui-text-xs">
+          <div className="text-secondray text-xs">
             {playlist.tracks.length} Tracks
           </div>
         </div>
       </div>
 
       <div
-        className="ui-flex-none ui-cursor-pointer"
+        className="flex-none cursor-pointer"
         onClick={() => {
           api?.apiService.uploadPlaylist(playlist.id);
         }}
@@ -65,7 +65,7 @@ function Title({ playlist }: PlayerlistItemProps) {
         <input
           ref={inputRef}
           autoFocus
-          className="ui-border-none ui-bg-transparent ui-outline-none"
+          className="border-none bg-transparent outline-none"
           onBlur={() => setIsEditing(false)}
           onKeyDown={async (e: React.KeyboardEvent) => {
             const target = e.target as HTMLInputElement;

@@ -3,21 +3,21 @@ import { PlayerList } from "./player-list";
 
 export function PlayerTabs() {
   return (
-    <Tabs defaultValue="playlist" className="ui-rounded-b-xl ui-bg-secondary">
+    <Tabs defaultValue="playlist" className="rounded-b-xl bg-secondary">
       <TabsList>
         <TabsTrigger value="playlist">
           <Icon name="ListMusic" size={14} />{" "}
-          <span className="ui-ml-2">Playlist</span>
+          <span className="ml-2">Playlist</span>
         </TabsTrigger>
         <TabsTrigger value="hub">
-          <Icon name="Rss" size={14} /> <span className="ui-ml-2">Hub</span>
+          <Icon name="Rss" size={14} /> <span className="ml-2">Hub</span>
         </TabsTrigger>
 
         <TabsTrigger value="cloud">
-          <Icon name="Cloud" size={14} /> <span className="ui-ml-2">Cloud</span>
+          <Icon name="Cloud" size={14} /> <span className="ml-2">Cloud</span>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="playlist" className="ui-mt-0">
+      <TabsContent value="playlist" className="mt-0">
         <PlayerList />
       </TabsContent>
       <TabsContent value="hub">Change your password here.</TabsContent>
