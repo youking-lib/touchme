@@ -45,6 +45,7 @@ export interface UploadTask {
   queue: {
     id: string;
     progress: number;
+    rate: number;
     status: UploadQueueStatus;
   }[];
 }

@@ -6,14 +6,14 @@ import { PlayerTabs } from "./player-tabs";
 import { PlayerControl } from "./player-control";
 import { ModelSelector } from "../model";
 import { useSelector } from "../hooks";
-import { UploadTask } from "./upload-task";
+import { UploadTasks } from "./upload-tasks";
 
 export function Main({ children }: React.PropsWithChildren): JSX.Element {
   return (
     <Provider>
       <Inner />
 
-      <UploadTask />
+      <UploadTasks />
     </Provider>
   );
 }

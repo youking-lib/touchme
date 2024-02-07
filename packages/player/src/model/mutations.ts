@@ -1,10 +1,4 @@
-import {
-  PlayerStatus,
-  Playlist,
-  ModelSelector,
-  Track,
-  UploadQueueStatus,
-} from ".";
+import { PlayerStatus, Playlist, ModelSelector, Track, UploadTask } from ".";
 import { PlayerState } from "./state";
 
 export const setDarkMode = (state: PlayerState) =>
@@ -87,13 +81,14 @@ export const addUploadTask = (
   }
 
   return PlayerState.set(state, draft => {
-    draft.uploadTask.push({
+    draft.uploadTasks.push({
       targetPlaylistId,
       localPlaylistId: playlist.id,
       queue: playlist.tracks.map(item => {
         return {
           id: item.id,
           progress: 0,
+          rate: 0,
           status: "pending",
         };
       }),
@@ -101,40 +96,21 @@ export const addUploadTask = (
   });
 };
 
-export const setUploadTrackStatus = (
+export const setUploadTaskItemState = (
   state: PlayerState,
   taskId: string,
   queueItemId: string,
-  status: UploadQueueStatus
+  task: Partial<UploadTask["queue"][number]>
 ) => {
   return PlayerState.set(state, draft => {
     const queueItem = ModelSelector.getUploadQueueItemById(
-      state,
+      draft,
       taskId,
       queueItemId
     );
 
     if (queueItem) {
-      queueItem.status = status;
-    }
-  });
-};
-
-export const setUploadTrackProgress = (
-  state: PlayerState,
-  taskId: string,
-  queueItemId: string,
-  progress: number
-) => {
-  return PlayerState.set(state, draft => {
-    const queueItem = ModelSelector.getUploadQueueItemById(
-      state,
-      taskId,
-      queueItemId
-    );
-
-    if (queueItem) {
-      queueItem.progress = progress;
+      Object.assign(queueItem, task);
     }
   });
 };

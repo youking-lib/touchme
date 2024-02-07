@@ -232,6 +232,9 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.472.0
         version: 3.504.0
+      '@repo/schema':
+        specifier: workspace:*
+        version: link:../schema
       '@repo/ui':
         specifier: workspace:*
         version: link:../ui

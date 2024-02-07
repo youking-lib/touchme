@@ -1,11 +1,11 @@
-import { object, string } from "zod";
+import z, { object, string } from "zod";
 
 export const HashSignPostValidator = object({
   hash: string(),
   filename: string(),
 });
 
-export type HashSignPostInput = typeof HashSignPostValidator;
+export type HashSignPostInput = z.infer<typeof HashSignPostValidator>;
 export type HashSignPostOutput =
   | {
       id: string;

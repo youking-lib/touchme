@@ -20,7 +20,7 @@ export class PlayerState {
 
   playerTabsOpen = true;
 
-  uploadTask: UploadTask[] = [];
+  uploadTasks: UploadTask[] = [];
 
   static set(state: PlayerState, recipe: (draft: PlayerState) => void) {
     const nextState = produce(state, draft => {

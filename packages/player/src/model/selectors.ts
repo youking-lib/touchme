@@ -1,4 +1,4 @@
-import { Track } from ".";
+import { UploadTask } from ".";
 import { PlayerState } from "./state";
 
 export const getDarkMode = (state: PlayerState) => state.darkMode;
@@ -12,6 +12,8 @@ export const getPlayingTrack = (state: PlayerState) => state.playingTrack;
 export const getPlayingStatus = (state: PlayerState) => state.playingStatus;
 export const getPlayingCurrentTime = (state: PlayerState) =>
   state.playingCurrentTime;
+
+export const getUploadTasks = (state: PlayerState) => state.uploadTasks;
 
 export const getIsLocalPlaylist = (state: PlayerState, id: string) => {
   return Boolean(state.localPlaylists.find(item => item.id === id));
@@ -29,7 +31,16 @@ export const getPlaylistById = (state: PlayerState, id: string) => {
 };
 
 export const getUploadTaskById = (state: PlayerState, id: string) =>
-  state.uploadTask.find(item => item.localPlaylistId === id);
+  state.uploadTasks.find(item => item.localPlaylistId === id);
+
+export const getUploadTaskItemByStatus = (
+  state: PlayerState,
+  taskId: string,
+  status: UploadTask["queue"][number]["status"]
+) => {
+  const queue = getUploadTaskById(state, taskId)?.queue || [];
+  return queue.filter(item => item.status === status);
+};
 
 export const getUploadQueueItemById = (
   state: PlayerState,
@@ -38,6 +49,16 @@ export const getUploadQueueItemById = (
 ) => {
   const task = getUploadTaskById(state, taskId);
   return task && task.queue.find(item => item.id === queueItemId);
+};
+
+export const getPlaylistTrackById = (
+  state: PlayerState,
+  playlistId: string,
+  trackId: string
+) => {
+  const playlist = getPlaylistById(state, playlistId);
+
+  return playlist?.tracks.find(item => item.id === trackId);
 };
 
 export const getNextPlayTrack = (state: PlayerState) => {

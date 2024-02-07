@@ -1,11 +1,11 @@
 import { Playlist, PlaylistTrack } from "@prisma/client";
-import { array, number, object, string } from "zod";
+import z, { array, number, object, string } from "zod";
 
 export const PlaylistPostValidator = object({
   name: string(),
 });
 
-export type PlaylistPostInput = typeof PlaylistPostValidator;
+export type PlaylistPostInput = z.infer<typeof PlaylistPostValidator>;
 export type PlaylistPostOutput = Playlist;
 
 export const PlaylistAddTrackPostValidator = object({
