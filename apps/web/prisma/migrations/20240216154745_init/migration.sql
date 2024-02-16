@@ -52,21 +52,9 @@ CREATE TABLE `PlaylistTrack` (
     `title` VARCHAR(191) NOT NULL,
     `genre` VARCHAR(191) NOT NULL,
     `artists` VARCHAR(191) NOT NULL,
+    `format` VARCHAR(191) NOT NULL,
     `fileId` VARCHAR(191) NULL,
     `playlistId` VARCHAR(191) NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `File` (
-    `id` VARCHAR(191) NOT NULL,
-    `filename` VARCHAR(191) NOT NULL,
-    `size` DOUBLE NOT NULL,
-    `key` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
-    `userId` VARCHAR(191) NULL,
-    `fileHashId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -76,7 +64,9 @@ CREATE TABLE `FileHash` (
     `id` VARCHAR(191) NOT NULL,
     `key` VARCHAR(191) NOT NULL,
     `hash` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
 
+    UNIQUE INDEX `FileHash_key_key`(`key`),
     UNIQUE INDEX `FileHash_hash_key`(`hash`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -91,13 +81,10 @@ ALTER TABLE `EmailVerificationCode` ADD CONSTRAINT `EmailVerificationCode_userId
 ALTER TABLE `Playlist` ADD CONSTRAINT `Playlist_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PlaylistTrack` ADD CONSTRAINT `PlaylistTrack_fileId_fkey` FOREIGN KEY (`fileId`) REFERENCES `File`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `PlaylistTrack` ADD CONSTRAINT `PlaylistTrack_fileId_fkey` FOREIGN KEY (`fileId`) REFERENCES `FileHash`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `PlaylistTrack` ADD CONSTRAINT `PlaylistTrack_playlistId_fkey` FOREIGN KEY (`playlistId`) REFERENCES `Playlist`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `File` ADD CONSTRAINT `File_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `File` ADD CONSTRAINT `File_fileHashId_fkey` FOREIGN KEY (`fileHashId`) REFERENCES `FileHash`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `FileHash` ADD CONSTRAINT `FileHash_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

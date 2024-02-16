@@ -5,7 +5,6 @@ import { parseBlob } from "music-metadata-browser";
 
 import { Player } from "../api";
 import { Track, Playlist, FileTrack } from "../model";
-import { readImageAsBase64 } from "../utils";
 
 const playlistStorage = localforage.createInstance({
   name: "playlist",
@@ -110,6 +109,7 @@ export class LocalService {
       title: common.title,
       track: common.track,
       year: common.year,
+      format: format.codec?.toUpperCase(),
     };
 
     const id = nanoid();
@@ -126,26 +126,11 @@ export class LocalService {
     return {
       album: "Unknown",
       artist: ["Unknown artist"],
-      disk: {
-        no: 0,
-        of: 0,
-      },
       duration: 0,
       genre: [],
-      loweredMetas: {
-        artist: ["unknown artist"],
-        album: "unknown",
-        title: "",
-        genre: [],
-      },
       path: "",
-      playCount: 0,
       title: "",
-      track: {
-        no: 0,
-        of: 0,
-      },
-      year: null,
+      format: "",
     };
   }
 }

@@ -1,4 +1,4 @@
-import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { CloudflareR2Constants } from "@/libs/constant";
 import { nanoid } from "nanoid";
@@ -11,50 +11,30 @@ import { prisma } from "../prisma";
 export async function upload(file: File, userId?: string) {
   const fileHash = await getOrUploadFile(file);
 
-  return await prisma.file.create({
-    data: {
-      userId,
-      filename: file.name,
-      size: file.size,
-      type: file.type,
-      key: fileHash.key,
-      fileHashId: fileHash.id,
-    },
-  });
+  return fileHash;
 }
 
-export async function getOrSignFileHash(hash: string, filename: string) {
+export async function getUploadedFileHash(hash: string) {
   const fileHash = await prisma.fileHash.findUnique({
     where: {
       hash,
     },
   });
 
-  if (fileHash) {
-    return {
-      id: fileHash.id,
-      key: fileHash.key,
-      hash: fileHash.hash,
-      signedUrl: null,
-    };
-  }
+  return fileHash;
+}
 
-  const Key = path.join(
-    CloudflareR2Constants.BASE_PATH,
-    `${nanoid()}${path.extname(filename)}`
-  );
-
-  const signedUrl = await getSignedUrl(
+export async function getPreSignedPutUrl(filename: string) {
+  const Key = getFullKey(`${nanoid()}${path.extname(filename)}`);
+  const preSignedUrl = await getSignedUrl(
     client,
     new PutObjectCommand({ Bucket: CloudflareR2Constants.R2_BUCKET_NAME, Key }),
     { expiresIn: 3600 }
   );
 
   return {
-    id: null,
-    hash,
     key: Key,
-    signedUrl,
+    preSignedUrl,
   };
 }
 
@@ -72,10 +52,7 @@ async function getOrUploadFile(file: File) {
     return fileHash;
   }
 
-  const Key = path.join(
-    CloudflareR2Constants.BASE_PATH,
-    `${nanoid()}${path.extname(file.name)}`
-  );
+  const Key = getFullKey(`${nanoid()}${path.extname(file.name)}`);
 
   await client.send(
     new PutObjectCommand({
@@ -91,4 +68,31 @@ async function getOrUploadFile(file: File) {
       key: Key,
     },
   });
+}
+
+export async function hashFile(Key: string) {
+  const metadata = await getFileMetaData(Key);
+  const hash = (metadata.ETag || "").slice(1, -1);
+
+  return prisma.fileHash.create({
+    data: {
+      hash,
+      key: Key,
+    },
+  });
+}
+
+export async function getFileMetaData(Key: string) {
+  const res = await client.send(
+    new HeadObjectCommand({
+      Bucket: CloudflareR2Constants.R2_BUCKET_NAME,
+      Key,
+    })
+  );
+
+  return res;
+}
+
+export function getFullKey(filename: string) {
+  return path.join(CloudflareR2Constants.BASE_PATH, filename);
 }

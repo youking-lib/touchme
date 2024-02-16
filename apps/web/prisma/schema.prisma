@@ -21,8 +21,8 @@ model User {
   // auth
   Session               Session[]
   EmailVerificationCode EmailVerificationCode[]
-  File                  File[]
   Playlist              Playlist[]
+  FileHash              FileHash[]
 }
 
 model Session {
@@ -65,34 +65,22 @@ model PlaylistTrack {
   title    String
   genre    String
   artists  String
+  format   String
 
-  file   File?   @relation(fields: [fileId], references: [id])
+  file   FileHash? @relation(fields: [fileId], references: [id])
   fileId String?
 
   playlist   Playlist? @relation(fields: [playlistId], references: [id])
   playlistId String?
 }
 
-model File {
-  id       String @id @default(cuid())
-  filename String
-  size     Float
-  key      String // aws s3 key
-  type     String
+model FileHash {
+  id   String @id @default(cuid())
+  key  String @unique // aws s3 path
+  hash String @unique // file md5 hash
 
   user   User?   @relation(fields: [userId], references: [id])
   userId String?
 
-  file       FileHash? @relation(fields: [fileHashId], references: [id])
-  fileHashId String?
-
   PlaylistTrack PlaylistTrack[]
-}
-
-model FileHash {
-  id   String @id @default(cuid())
-  key  String // aws s3 path
-  hash String @unique // file md5 hash
-
-  File File[]
 }

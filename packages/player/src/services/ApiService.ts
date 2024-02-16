@@ -6,6 +6,10 @@ import {
   HashSignPostOutput,
   HashSignPostInput,
   PlaylistPostInput,
+  FileHashPostInput,
+  FileHashPostOutput,
+  PlaylistAddTrackPostOutput,
+  PlaylistAddTrackPostInput,
 } from "@repo/schema";
 
 import { Player } from "../api";
@@ -57,24 +61,44 @@ export class ApiService {
 
     const tracks = localPlaylist!.tracks as FileTrack[];
 
-    await this.uploadFile(tracks[1].file, event => {
-      // console.log(`Upload [${(progress*100).toFixed(2)}%]: ${(rate / 1024).toFixed(2)}KB/s`)
+    for (let i = 0; i < 2; i++) {
+      const track = tracks[i];
+      const { key, fileId } = await this.uploadFile(tracks[i].file, event => {
+        // console.log(`Upload [${(progress*100).toFixed(2)}%]: ${(rate / 1024).toFixed(2)}KB/s`)
+
+        this.api.setState(state =>
+          ModelMutation.setUploadTaskItemState(state, taskId, tracks[1].id, {
+            status: event.progress === 1 ? "resolve" : "uploading",
+            progress: event.progress,
+            rate: event.rate,
+          })
+        );
+      });
+
+      await fetch<PlaylistAddTrackPostOutput, PlaylistAddTrackPostInput>({
+        url: `/api/playlist/${playlist.id}/add-track`,
+        method: "POST",
+        data: {
+          playlistId: playlist.id,
+          album: track.album,
+          artist: track.artist,
+          duration: track.duration,
+          genre: track.genre,
+          title: track.title,
+          fileId: fileId,
+          format: track.format,
+        },
+      });
 
       this.api.setState(state =>
         ModelMutation.setUploadTaskItemState(state, taskId, tracks[1].id, {
-          status: event.progress === 1 ? "resolve" : "uploading",
-          progress: event.progress,
-          rate: event.rate,
+          status: "resolve",
         })
       );
-    });
-
-    this.api.setState(state =>
-      ModelMutation.setUploadTaskItemState(state, taskId, tracks[1].id, {
-        status: "resolve",
-      })
-    );
+    }
   }
+
+  async addTrack(playlistId: string, track: FileTrack) {}
 
   async uploadFile(
     file: File,
@@ -94,28 +118,41 @@ export class ApiService {
       }
     );
 
-    if (hashSignResponse.signedUrl) {
-      const res = await axios({
-        url: hashSignResponse.signedUrl,
-        method: "PUT",
-        data: file,
-        headers: { "Content-Type": file.type },
-        onUploadProgress({ progress, rate }) {
-          onProgress({
-            progress: progress || 0,
-            rate: rate || 0, // bytes/s
-          });
-        },
-      });
-
-      if (res.status !== 200) {
-        throw new Error("Upload Error: " + res.statusText);
-      }
+    if (!hashSignResponse.preSignedUrl) {
+      return {
+        fileId: hashSignResponse.id!,
+        key: hashSignResponse.key,
+      };
     }
 
+    const res = await axios({
+      url: hashSignResponse.preSignedUrl,
+      method: "PUT",
+      data: file,
+      headers: { "Content-Type": file.type },
+      onUploadProgress({ progress, rate }) {
+        onProgress({
+          progress: progress || 0,
+          rate: rate || 0, // bytes/s
+        });
+      },
+    });
+
+    if (res.status !== 200) {
+      throw new Error("Upload Error: " + res.statusText);
+    }
+
+    const result = await fetch<FileHashPostOutput, FileHashPostInput>({
+      url: "/api/file-hash",
+      method: "POST",
+      data: {
+        key: hashSignResponse.key,
+      },
+    });
+
     return {
-      hash: hashSignResponse.hash,
-      key: hashSignResponse.key,
+      fileId: result.id,
+      key: result.key,
     };
   }
 }

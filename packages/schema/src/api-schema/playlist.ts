@@ -16,7 +16,10 @@ export const PlaylistAddTrackPostValidator = object({
   genre: array(string()).default([]),
   title: string(),
   fileId: string(),
+  format: string(),
 });
 
-export type PlaylistAddTrackPostInput = typeof PlaylistAddTrackPostValidator;
+export type PlaylistAddTrackPostInput = z.infer<
+  typeof PlaylistAddTrackPostValidator
+>;
 export type PlaylistAddTrackPostOutput = PlaylistTrack;

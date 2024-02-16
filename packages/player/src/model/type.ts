@@ -4,20 +4,9 @@ export interface Track {
   artist: string[];
   duration: number;
   genre: string[];
-  loweredMetas: {
-    artist: string[];
-    album: string;
-    title: string;
-    genre: string[];
-  };
   path: string;
-  playCount: number;
   title: string;
-  track: {
-    no: number;
-    of: number;
-  };
-  year: number | null;
+  format: string;
 }
 
 export interface FileTrack extends Track {

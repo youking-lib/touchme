@@ -36,6 +36,7 @@ export const POST = async (req: NextRequest) => {
       genre: trackFieldEncode(validation.data.genre),
       title: validation.data.title,
       fileId: validation.data.fileId,
+      format: validation.data.format,
     },
   });
 
