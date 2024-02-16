@@ -10,7 +10,6 @@ import { LocalService } from "./services/LocalService";
 import { PlayService } from "./services/PlayService";
 import { ApiService } from "./services/ApiService";
 import { ModelHelpers } from "./model-helpers";
-import { formatTrack } from "./utils/formatTrack";
 
 export type PlayerOptions = {
   state: PlayerState;
@@ -71,12 +70,12 @@ export class Player {
 
     if (!track) return;
 
+    await this.playService.setTrack(track);
+    await this.playService.play();
+
     if (track.id !== playingTrack?.id) {
       this.setState(state => ModelMutation.setOrInitPlayTrack(state, track));
     }
-
-    await this.playService.setTrack(track);
-    await this.playService.play();
 
     this.setState(state =>
       ModelMutation.setPlayerStatus(state, PlayerStatus.PLAY)

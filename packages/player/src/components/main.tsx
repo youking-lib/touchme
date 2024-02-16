@@ -11,7 +11,9 @@ import { UploadTasks } from "./upload-tasks";
 export function Main({ children }: React.PropsWithChildren): JSX.Element {
   return (
     <Provider>
-      <Inner />
+      <div className="dark player" data-role="player">
+        <Inner />
+      </div>
 
       <UploadTasks />
     </Provider>
@@ -24,7 +26,7 @@ function Inner() {
   return (
     <Card>
       <CardContent className="p-0 w-[360px]">
-        <div className="pb-2">
+        <div className="py-2">
           <PlayerControl />
         </div>
         {playerTabsOpen && <PlayerTabs />}

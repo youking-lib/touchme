@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { clsx } from "clsx";
 import {
   Icon,
   ToggleGroup,
@@ -7,10 +8,11 @@ import {
   Slider,
   Separator,
 } from "@repo/ui";
+import { animated, useSpring } from "@react-spring/web";
 import { parseBlob, IAudioMetadata } from "music-metadata-browser";
 
 import { useLazyPlayer, useMutation, useSelector } from "../hooks";
-import { FileTrack, ModelSelector, PlayerStatus } from "../model";
+import { FileTrack, ModelSelector, PlayerStatus, Track } from "../model";
 
 type PlayerControlProps = {};
 
@@ -19,67 +21,19 @@ export function PlayerControl({}: PlayerControlProps) {
   const playStatus = useSelector(ModelSelector.getPlayingStatus);
   const playerTabsOpen = useSelector(ModelSelector.getPlayerTabsOpen);
 
-  const [trackFormat, setTrackFormat] = useState<
-    IAudioMetadata["format"] | null
-  >(null);
+  const wrapperElStyle = useSpring({
+    height: playTrack ? 150 : 70,
+  });
 
   const mutations = useMutation();
   const loader = useLazyPlayer();
 
-  const artist = playTrack?.artist[0];
-  const album = playTrack?.album;
-
-  useEffect(() => {
-    parseFormat();
-
-    async function parseFormat() {
-      if (playTrack) {
-        const { format } = await parseBlob((playTrack as FileTrack).file);
-        setTrackFormat(format);
-      }
-    }
-  }, [playTrack]);
-
   return (
-    <div className="h-[150px] flex flex-col py-1 px-4">
-      <div className="flex-1">
-        <div className="flex h-5 items-center space-x-2 text-xs text-muted-foreground">
-          {trackFormat?.codec && (
-            <>
-              <div>{trackFormat.codec}</div>
-              <Separator orientation="vertical" />
-            </>
-          )}
-          {trackFormat?.bitrate && (
-            <>
-              <div>{(trackFormat.bitrate / 1000).toFixed(0)}kbps</div>
-              <Separator orientation="vertical" />
-            </>
-          )}
-          {trackFormat?.bitsPerSample && (
-            <>
-              <div>{trackFormat.bitsPerSample}bit</div>
-              <Separator orientation="vertical" />
-            </>
-          )}
-          {trackFormat?.sampleRate && (
-            <>
-              <div>{trackFormat.sampleRate / 1000}kHz</div>
-            </>
-          )}
-        </div>
-
-        <Separator className="mb-4 mt-1" />
-
-        <div className="space-y-2">
-          <h4 className="font-medium leading-none">{playTrack?.title || ""}</h4>
-          <p className="text-xs text-muted-foreground">
-            {artist && <span>@{artist}|</span>}
-            {album}
-          </p>
-        </div>
-      </div>
-
+    <animated.div
+      className="h-[150px] flex flex-col justify-center py-1 px-4"
+      style={wrapperElStyle}
+    >
+      <PlayingTrackMeta />
       <PlayingProgress />
 
       <div className="flex justify-between">
@@ -133,7 +87,7 @@ export function PlayerControl({}: PlayerControlProps) {
           <Icon name="Menu" />
         </Toggle>
       </div>
-    </div>
+    </animated.div>
   );
 }
 
@@ -146,9 +100,75 @@ function PlayingProgress() {
   return (
     <Slider
       ref={ref}
-      className="my-2"
+      className={clsx("my-2", {
+        hidden: !track,
+      })}
       max={track?.duration}
       value={[playingCurrentTime]}
     />
+  );
+}
+
+function PlayingTrackMeta() {
+  const playTrack = useSelector(ModelSelector.getPlayingTrack);
+  const artist = playTrack?.artist[0];
+  const album = playTrack?.album;
+
+  const [trackFormat, setTrackFormat] = useState<
+    IAudioMetadata["format"] | null
+  >(null);
+  useEffect(() => {
+    parseFormat();
+
+    async function parseFormat() {
+      if (playTrack) {
+        const { format } = await parseBlob((playTrack as FileTrack).file);
+        setTrackFormat(format);
+      }
+    }
+  }, [playTrack]);
+
+  return (
+    <div
+      className={clsx("flex-1", {
+        hidden: !playTrack,
+      })}
+    >
+      <div className="flex h-5 items-center space-x-2 text-xs text-muted-foreground">
+        {trackFormat?.codec && (
+          <>
+            <div>{trackFormat.codec}</div>
+            <Separator orientation="vertical" />
+          </>
+        )}
+        {trackFormat?.bitrate && (
+          <>
+            <div>{(trackFormat.bitrate / 1000).toFixed(0)}kbps</div>
+            <Separator orientation="vertical" />
+          </>
+        )}
+        {trackFormat?.bitsPerSample && (
+          <>
+            <div>{trackFormat.bitsPerSample}bit</div>
+            <Separator orientation="vertical" />
+          </>
+        )}
+        {trackFormat?.sampleRate && (
+          <>
+            <div>{trackFormat.sampleRate / 1000}kHz</div>
+          </>
+        )}
+      </div>
+
+      <Separator className="mb-4 mt-1" />
+
+      <div className="space-y-2">
+        <h4 className="font-medium leading-none">{playTrack?.title || ""}</h4>
+        <p className="text-xs text-muted-foreground">
+          {artist && <span>@{artist}|</span>}
+          {album}
+        </p>
+      </div>
+    </div>
   );
 }

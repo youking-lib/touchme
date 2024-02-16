@@ -9,7 +9,7 @@ import {
 import { clsx } from "clsx";
 
 import { useSelector, useLazyPlayer } from "../hooks";
-import { Playlist, ModelSelector, Track } from "../model";
+import { Playlist, ModelSelector, Track, ModelMutation } from "../model";
 import { PlayerlistItem, getTitle } from "./player-list-item";
 
 export function PlayerTracks({ playlist }: { playlist: Playlist }) {
@@ -36,6 +36,7 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
             return (
               <TrackRow
                 key={track.id}
+                playlist={playlist}
                 track={track}
                 index={index}
                 active={playTrack?.id === track.id}
@@ -49,12 +50,13 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
 }
 
 type TrackRowProps = {
+  playlist: Playlist;
   active: boolean;
   track: Track;
   index: number;
 };
 
-function TrackRow({ track, index, active }: TrackRowProps) {
+function TrackRow({ track, index, active, playlist }: TrackRowProps) {
   const loader = useLazyPlayer();
 
   return (
@@ -72,6 +74,9 @@ function TrackRow({ track, index, active }: TrackRowProps) {
         onClick={() => {
           loader(player => {
             if (!active) {
+              player.setState(state =>
+                ModelMutation.setOrInitPlayQueue(state, playlist)
+              );
               player.play(track);
             } else {
               player.playPause();

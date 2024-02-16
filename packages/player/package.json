@@ -32,9 +32,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.472.0",
+    "@react-spring/web": "^9.7.3",
+    "@repo/schema": "workspace:*",
     "@repo/ui": "workspace:*",
     "@types/lodash": "^4.14.202",
-    "@repo/schema": "workspace:*",
     "antd": "^5.13.2",
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
