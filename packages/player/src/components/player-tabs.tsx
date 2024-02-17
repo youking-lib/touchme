@@ -1,5 +1,6 @@
 import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui";
 import { PlayerList } from "./player-list";
+import { HubContent } from "./hub-content";
 
 export function PlayerTabs() {
   return (
@@ -20,7 +21,9 @@ export function PlayerTabs() {
       <TabsContent value="playlist" className="mt-0">
         <PlayerList />
       </TabsContent>
-      <TabsContent value="hub">Change your password here.</TabsContent>
+      <TabsContent value="hub">
+        <HubContent />
+      </TabsContent>
     </Tabs>
   );
 }

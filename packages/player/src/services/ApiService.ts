@@ -2,10 +2,9 @@ import axios from "axios";
 import { fetch } from "../utils";
 import { md5 } from "js-md5";
 import {
-  PlaylistPostOutput,
   HashSignPostOutput,
   HashSignPostInput,
-  PlaylistPostInput,
+  PlaylistSchema,
   FileHashPostInput,
   FileHashPostOutput,
   PlaylistAddTrackPostOutput,
@@ -13,10 +12,23 @@ import {
 } from "@repo/schema";
 
 import { Player } from "../api";
-import { FileTrack, ModelMutation, ModelSelector, Playlist } from "../model";
+import { FileTrack, ModelMutation, ModelSelector } from "../model";
 
 export class ApiService {
   constructor(public api: Player) {}
+
+  async getPlaylists() {
+    const playlists = await fetch<
+      PlaylistSchema.Get["Output"],
+      PlaylistSchema.Get["Input"]
+    >({
+      url: "/api/playlist",
+      method: "GET",
+      params: {},
+    });
+
+    return playlists;
+  }
 
   async updatePlaylistName(id: string, name: string) {
     const isLocalPlaylist = ModelSelector.getIsLocalPlaylist(
@@ -47,7 +59,10 @@ export class ApiService {
 
     if (!isLocalPlaylist) return;
 
-    const playlist = await fetch<PlaylistPostOutput, PlaylistPostInput>({
+    const playlist = await fetch<
+      PlaylistSchema.Post["Output"],
+      PlaylistSchema.Post["Input"]
+    >({
       url: "/api/playlist",
       method: "POST",
       data: {
@@ -97,8 +112,6 @@ export class ApiService {
       );
     }
   }
-
-  async addTrack(playlistId: string, track: FileTrack) {}
 
   async uploadFile(
     file: File,
