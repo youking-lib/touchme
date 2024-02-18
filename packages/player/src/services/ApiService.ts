@@ -9,10 +9,16 @@ import {
   FileHashPostOutput,
   PlaylistAddTrackPostOutput,
   PlaylistAddTrackPostInput,
+  PlaylistTrackSchema,
 } from "@repo/schema";
 
 import { Player } from "../api";
-import { FileTrack, ModelMutation, ModelSelector } from "../model";
+import {
+  LocalFileTrack,
+  HubPlaylist,
+  ModelMutation,
+  ModelSelector,
+} from "../model";
 
 export class ApiService {
   constructor(public api: Player) {}
@@ -74,21 +80,24 @@ export class ApiService {
       ModelMutation.addUploadTask(state, taskId, playlist.id)
     );
 
-    const tracks = localPlaylist!.tracks as FileTrack[];
+    const tracks = localPlaylist!.tracks as LocalFileTrack[];
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 2; i < 4; i++) {
       const track = tracks[i];
-      const { key, fileId } = await this.uploadFile(tracks[i].file, event => {
-        // console.log(`Upload [${(progress*100).toFixed(2)}%]: ${(rate / 1024).toFixed(2)}KB/s`)
+      const { key, fileId } = await this.uploadFile(
+        tracks[i].localFile,
+        event => {
+          // console.log(`Upload [${(progress*100).toFixed(2)}%]: ${(rate / 1024).toFixed(2)}KB/s`)
 
-        this.api.setState(state =>
-          ModelMutation.setUploadTaskItemState(state, taskId, tracks[1].id, {
-            status: event.progress === 1 ? "resolve" : "uploading",
-            progress: event.progress,
-            rate: event.rate,
-          })
-        );
-      });
+          this.api.setState(state =>
+            ModelMutation.setUploadTaskItemState(state, taskId, tracks[1].id, {
+              status: event.progress === 1 ? "resolve" : "uploading",
+              progress: event.progress,
+              rate: event.rate,
+            })
+          );
+        }
+      );
 
       await fetch<PlaylistAddTrackPostOutput, PlaylistAddTrackPostInput>({
         url: `/api/playlist/${playlist.id}/add-track`,
@@ -96,7 +105,7 @@ export class ApiService {
         data: {
           playlistId: playlist.id,
           album: track.album,
-          artist: track.artist,
+          artists: track.artists,
           duration: track.duration,
           genre: track.genre,
           title: track.title,

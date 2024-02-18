@@ -55,7 +55,7 @@ model Playlist {
   user   User?   @relation(fields: [userId], references: [id])
   userId String?
 
-  PlaylistTrack PlaylistTrack[]
+  tracks PlaylistTrack[]
 }
 
 model PlaylistTrack {

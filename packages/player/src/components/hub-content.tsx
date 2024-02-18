@@ -1,24 +1,47 @@
 import { useEffect } from "react";
-import { usePlayer, useSelector } from "../hooks";
-import { ModelSelector } from "../model";
 import { Icon } from "@repo/ui";
 
+import { useMutation, usePlayer, useSelector } from "../hooks";
+import { ModelSelector } from "../model";
+import { PlayerlistItem } from "./player-list-item";
+
 export function HubContent() {
-  const playlists = useSelector(ModelSelector.getPlaylists);
+  const hubViewState = useSelector(ModelSelector.getHubViewState);
+  const mutations = useMutation();
   const player = usePlayer();
 
   useEffect(() => {
-    if (!player) {
-      return;
+    if (!hubViewState.initialzie) {
+      init();
     }
 
-    player.apiService.getPlaylists();
+    async function init() {
+      if (!player) {
+        return;
+      }
+
+      const playlists = await player.apiService.getPlaylists();
+
+      mutations.setHubViewState({
+        playlists: playlists,
+        initialzie: true,
+      });
+    }
   }, [player]);
 
   return (
     <div className="min-h-[200px] pb-2">
       <span className="animate-spin">
-        <Icon name="Loader" />
+        {!hubViewState.initialzie && <Icon name="Loader" />}
+
+        {hubViewState.playlists.map(item => (
+          <PlayerlistItem
+            id={item.id}
+            key={item.id}
+            title={item.name}
+            tracksCount={item.tracks.length}
+          />
+        ))}
       </span>
     </div>
   );

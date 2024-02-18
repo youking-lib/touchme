@@ -2,13 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@repo/ui";
 
 import { usePlayer } from "../hooks";
-import { Playlist } from "../model";
 
 type PlayerlistItemProps = {
-  playlist: Playlist;
+  id: string;
+  title: string;
+  tracksCount: number;
 };
 
-export function PlayerlistItem({ playlist }: PlayerlistItemProps) {
+export function PlayerlistItem({
+  id,
+  title,
+  tracksCount,
+}: PlayerlistItemProps) {
   const api = usePlayer();
 
   return (
@@ -24,19 +29,17 @@ export function PlayerlistItem({ playlist }: PlayerlistItemProps) {
 
         <div>
           <div className="text-foreground font-bold">
-            <Title playlist={playlist} />
+            <Title id={id} title={title} />
           </div>
 
-          <div className="text-secondray text-xs">
-            {playlist.tracks.length} Tracks
-          </div>
+          <div className="text-secondray text-xs">{tracksCount} Tracks</div>
         </div>
       </div>
 
       <div
         className="flex-none cursor-pointer"
         onClick={() => {
-          api?.apiService.uploadPlaylist(playlist.id);
+          api?.apiService.uploadPlaylist(id);
         }}
       >
         <Icon name="UploadCloud" size={16} />
@@ -45,7 +48,7 @@ export function PlayerlistItem({ playlist }: PlayerlistItemProps) {
   );
 }
 
-function Title({ playlist }: PlayerlistItemProps) {
+function Title({ id, title }: Pick<PlayerlistItemProps, "id" | "title">) {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -57,7 +60,7 @@ function Title({ playlist }: PlayerlistItemProps) {
     }
   }, [isEditing]);
 
-  const title = getTitle(playlist);
+  const playlistTitle = getTitle(title);
 
   return (
     <>
@@ -72,7 +75,7 @@ function Title({ playlist }: PlayerlistItemProps) {
             const value = target.value;
 
             if (e.key === "Enter") {
-              await player?.apiService.updatePlaylistName(playlist.id, value);
+              await player?.apiService.updatePlaylistName(id, value);
               setIsEditing(false);
             }
 
@@ -80,15 +83,15 @@ function Title({ playlist }: PlayerlistItemProps) {
               setIsEditing(false);
             }
           }}
-          defaultValue={title}
+          defaultValue={playlistTitle}
         />
       ) : (
-        <span onDoubleClick={() => setIsEditing(true)}>{title}</span>
+        <span onDoubleClick={() => setIsEditing(true)}>{playlistTitle}</span>
       )}
     </>
   );
 }
 
-export const getTitle = (playlist: Playlist) => {
-  return playlist.name || "Playlist";
+export const getTitle = (title: string) => {
+  return title || "Playlist";
 };

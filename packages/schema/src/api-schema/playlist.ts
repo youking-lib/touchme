@@ -1,12 +1,12 @@
-import { Playlist, PlaylistTrack } from "@prisma/client";
+import { Playlist, PlaylistTrack, Prisma } from "@prisma/client";
 import z, { array, number, object, string } from "zod";
 
 export const PlaylistAddTrackPostValidator = object({
   playlistId: string(),
   album: string(),
-  artist: array(string()),
+  artists: string(),
   duration: number(),
-  genre: array(string()).default([]),
+  genre: string(),
   title: string(),
   fileId: string(),
   format: string(),
@@ -25,7 +25,22 @@ export module PlaylistSchema {
 
   export type Get = {
     Input: z.infer<typeof Validator.GetInput>;
-    Output: Playlist[];
+    Output: Prisma.PlaylistGetPayload<{
+      include: {
+        user: true;
+        tracks: {
+          include: {
+            file: {
+              select: {
+                id: true;
+                hash: true;
+                key: true;
+              };
+            };
+          };
+        };
+      };
+    }>[];
   };
 
   export const Validator = {

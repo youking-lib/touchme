@@ -26,7 +26,7 @@ export function Provider(
 
     setPlayer(instance);
 
-    window["Player"] = instance;
+    window["player"] = instance;
 
     return instance.init();
   }, []);

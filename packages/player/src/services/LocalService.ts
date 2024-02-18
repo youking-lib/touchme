@@ -4,7 +4,8 @@ import localforage from "localforage";
 import { parseBlob } from "music-metadata-browser";
 
 import { Player } from "../api";
-import { Track, Playlist, FileTrack } from "../model";
+import { Track, LocalPlaylist, LocalFileTrack } from "../model";
+import { PlaylistTrackSchema } from "@repo/schema";
 
 const playlistStorage = localforage.createInstance({
   name: "playlist",
@@ -44,9 +45,9 @@ export class LocalService {
   }
 
   async getPlaylists() {
-    const playlists: Playlist[] = [];
+    const playlists: LocalPlaylist[] = [];
 
-    await playlistStorage.iterate<Playlist, void>(value => {
+    await playlistStorage.iterate<LocalPlaylist, void>(value => {
       if (value) {
         playlists.push(value);
       }
@@ -55,10 +56,10 @@ export class LocalService {
     return playlists;
   }
 
-  createPlaylist(playlist: Omit<Playlist, "id">) {
+  createPlaylist(playlist: Omit<LocalPlaylist, "id">) {
     const id = nanoid();
 
-    return playlistStorage.setItem<Playlist>(id, {
+    return playlistStorage.setItem<LocalPlaylist>(id, {
       id,
       ...playlist,
     });
@@ -69,11 +70,11 @@ export class LocalService {
     return playlists.find(item => item.id === id);
   }
 
-  async updatePlaylist(id: string, input: Partial<Playlist>) {
+  async updatePlaylist(id: string, input: Partial<LocalPlaylist>) {
     const playlist = await this.getPlaylist(id);
 
     if (playlist) {
-      await playlistStorage.setItem<Playlist>(id, {
+      await playlistStorage.setItem<LocalPlaylist>(id, {
         ...playlist,
         ...input,
       });
@@ -92,24 +93,27 @@ export class LocalService {
     return playlist;
   }
 
-  async parseMusicMetadata(file: File): Promise<FileTrack> {
+  async parseMusicMetadata(file: File): Promise<LocalFileTrack> {
     const { common, format, native, quality } = await parseBlob(file);
 
     console.log(native, quality, common, format);
 
-    const metadata = {
-      album: common.album,
-      artist:
-        common.artists ||
+    const artists = PlaylistTrackSchema.Formatter.trackFieldEncode(
+      common.artists ||
         (common.artist && [common.artist]) ||
-        (common.albumartist && [common.albumartist]),
-      disk: common.disk,
-      duration: format.duration,
-      genre: common.genre,
-      title: common.title,
-      track: common.track,
-      year: common.year,
-      format: format.codec?.toUpperCase(),
+        (common.albumartist && [common.albumartist]) ||
+        []
+    );
+
+    const metadata: Omit<Track, "id"> = {
+      album: common.album || "",
+      artists: artists,
+      duration: format.duration || 0,
+      genre: PlaylistTrackSchema.Formatter.trackFieldEncode(common.genre || []),
+      title: common.title || "",
+      format: format.codec?.toUpperCase()!,
+      fileId: null,
+      playlistId: null,
     };
 
     const id = nanoid();
@@ -117,7 +121,7 @@ export class LocalService {
     return {
       ...this.getDefaultMetadata(),
       ...pickBy(metadata),
-      file,
+      localFile: file,
       id,
     };
   }
@@ -125,12 +129,13 @@ export class LocalService {
   getDefaultMetadata(): Omit<Track, "id"> {
     return {
       album: "Unknown",
-      artist: ["Unknown artist"],
+      artists: "Unknown artist",
       duration: 0,
-      genre: [],
-      path: "",
+      genre: "",
       title: "",
       format: "",
+      fileId: null,
+      playlistId: null,
     };
   }
 }

@@ -18,7 +18,11 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
 
   return (
     <div className="text-muted-foreground">
-      <PlayerlistItem playlist={playlist} />
+      <PlayerlistItem
+        id={playlist.id}
+        title={playlist.name}
+        tracksCount={playlist.tracks.length}
+      />
 
       <Table className="text-xs table-fixed">
         <colgroup>
@@ -28,7 +32,7 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
         </colgroup>
 
         <TableCaption className="text-xs">
-          {getTitle(playlist)}|{tracks.length} Tracks
+          {getTitle(playlist.name)}|{tracks.length} Tracks
         </TableCaption>
 
         <TableBody>
@@ -86,7 +90,9 @@ function TrackRow({ track, index, active, playlist }: TrackRowProps) {
       >
         {track.title}
       </TableCell>
-      <TableCell className="text-right">{track.artist[0]}</TableCell>
+      <TableCell className="text-right text-ellipsis text-nowrap overflow-hidden">
+        {track.artists}
+      </TableCell>
     </TableRow>
   );
 }

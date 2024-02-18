@@ -4,9 +4,11 @@ import { PlayerState } from "./state";
 export const getDarkMode = (state: PlayerState) => state.darkMode;
 export const getPlayerTabsOpen = (state: PlayerState) => state.playerTabsOpen;
 export const getPlaylists = (state: PlayerState) => [
-  ...state.playlists,
+  ...state.subPlaylists,
   ...state.localPlaylists,
 ];
+export const getHubViewState = (state: PlayerState) => state.hubViewState;
+
 export const getPlayingQueue = (state: PlayerState) => state.playingQueue;
 export const getPlayingTrack = (state: PlayerState) => state.playingTrack;
 export const getPlayingStatus = (state: PlayerState) => state.playingStatus;
