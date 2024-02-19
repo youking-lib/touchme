@@ -1,5 +1,7 @@
 "use client";
 
+import "@repo/ui/styles.css";
+
 import * as React from "react";
 import { Main } from "./components/main";
 

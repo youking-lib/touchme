@@ -1,24 +1,40 @@
 import { Icon } from "@repo/ui";
 import Upload, { UploadProps } from "rc-upload";
 
+import { ModelSelector, Playlist } from "../model";
 import { useSelector, useMutation, useLazyPlayer } from "../hooks";
-import { ModelSelector } from "../model";
-import { PlayerTracks } from "./player-tracks";
+import { PlaylistItem, PlaylistItemProps } from "./playlist-item";
 
-export function PlayerList() {
+export function UserPlaylists() {
   const playlists = useSelector(ModelSelector.getPlaylists);
-
   const isEmpty = playlists.length === 0;
 
   if (isEmpty) {
     return <UploadLocal />;
   }
 
-  const playlist = playlists[0];
+  return <Playlists playlists={playlists} defaultTrackHeight={500} />;
+}
 
+export function HubPlaylists() {
+  const playlists = useSelector(
+    state => ModelSelector.getHubViewState(state).playlists
+  );
+
+  return <Playlists playlists={playlists} />;
+}
+
+export function Playlists({
+  playlists,
+  ...playlistItemProps
+}: { playlists: Playlist[] } & Pick<PlaylistItemProps, "defaultTrackHeight">) {
   return (
-    <div className="min-h-[200px] pb-2">
-      {playlist && <PlayerTracks playlist={playlist} />}
+    <div role="playlists">
+      {playlists.map(item => {
+        return (
+          <PlaylistItem key={item.id} playlist={item} {...playlistItemProps} />
+        );
+      })}
     </div>
   );
 }

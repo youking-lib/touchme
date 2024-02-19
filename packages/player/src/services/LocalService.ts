@@ -6,6 +6,7 @@ import { parseBlob } from "music-metadata-browser";
 import { Player } from "../api";
 import { Track, LocalPlaylist, LocalFileTrack } from "../model";
 import { PlaylistTrackSchema } from "@repo/schema";
+import { genDefaultLocalPlaylistName } from "../utils/defaultGen";
 
 const playlistStorage = localforage.createInstance({
   name: "playlist",
@@ -58,10 +59,12 @@ export class LocalService {
 
   createPlaylist(playlist: Omit<LocalPlaylist, "id">) {
     const id = nanoid();
+    const name = playlist.name || genDefaultLocalPlaylistName(playlist.tracks);
 
     return playlistStorage.setItem<LocalPlaylist>(id, {
       id,
       ...playlist,
+      name,
     });
   }
 

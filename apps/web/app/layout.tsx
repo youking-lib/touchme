@@ -1,5 +1,7 @@
-import "./globals.css";
+import "@repo/ui/styles.css";
 import "@repo/player/styles.css";
+
+import "./globals.css";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";

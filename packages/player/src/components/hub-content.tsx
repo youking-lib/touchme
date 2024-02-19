@@ -3,7 +3,7 @@ import { Icon } from "@repo/ui";
 
 import { useMutation, usePlayer, useSelector } from "../hooks";
 import { ModelSelector } from "../model";
-import { PlayerlistItem } from "./player-list-item";
+import { HubPlaylists } from "./playlists";
 
 export function HubContent() {
   const hubViewState = useSelector(ModelSelector.getHubViewState);
@@ -30,19 +30,16 @@ export function HubContent() {
   }, [player]);
 
   return (
-    <div className="min-h-[200px] pb-2">
-      <span className="animate-spin">
-        {!hubViewState.initialzie && <Icon name="Loader" />}
+    <div role="hub-content">
+      {!hubViewState.initialzie && (
+        <div className="flex justify-center">
+          <span className="animate-spin inline-block">
+            <Icon name="Loader" />
+          </span>
+        </div>
+      )}
 
-        {hubViewState.playlists.map(item => (
-          <PlayerlistItem
-            id={item.id}
-            key={item.id}
-            title={item.name}
-            tracksCount={item.tracks.length}
-          />
-        ))}
-      </span>
+      <HubPlaylists />
     </div>
   );
 }

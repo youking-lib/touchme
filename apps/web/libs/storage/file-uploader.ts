@@ -1,4 +1,8 @@
-import { PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  HeadObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { CloudflareR2Constants } from "@/libs/constant";
 import { nanoid } from "nanoid";
@@ -36,6 +40,32 @@ export async function getPreSignedPutUrl(filename: string) {
     key: Key,
     preSignedUrl,
   };
+}
+
+export async function getPreSignedGetUrlByFileId(fileId: string) {
+  const file = await prisma.fileHash.findUnique({
+    where: {
+      id: fileId,
+    },
+  });
+
+  if (file) {
+    return getPreSignedGetUrl(file.key);
+  }
+
+  return null;
+}
+
+export async function getPreSignedGetUrl(fullKey: string) {
+  const preSignedUrl = await getSignedUrl(
+    client,
+    new GetObjectCommand({
+      Bucket: CloudflareR2Constants.R2_BUCKET_NAME,
+      Key: fullKey,
+    }),
+    { expiresIn: 3600 }
+  );
+  return preSignedUrl;
 }
 
 async function getOrUploadFile(file: File) {

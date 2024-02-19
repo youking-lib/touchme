@@ -12,7 +12,13 @@ import { animated, useSpring } from "@react-spring/web";
 import { parseBlob, IAudioMetadata } from "music-metadata-browser";
 
 import { useLazyPlayer, useMutation, useSelector } from "../hooks";
-import { LocalFileTrack, ModelSelector, PlayerStatus, Track } from "../model";
+import {
+  LocalFileTrack,
+  ModelSelector,
+  PlayerStatus,
+  Track,
+  isLocalFileTrack,
+} from "../model";
 
 type PlayerControlProps = {};
 
@@ -122,10 +128,8 @@ function PlayingTrackMeta() {
     parseFormat();
 
     async function parseFormat() {
-      if (playTrack) {
-        const { format } = await parseBlob(
-          (playTrack as LocalFileTrack).localFile
-        );
+      if (playTrack && isLocalFileTrack(playTrack)) {
+        const { format } = await parseBlob(playTrack.localFile);
         setTrackFormat(format);
       }
     }

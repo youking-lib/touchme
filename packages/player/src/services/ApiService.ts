@@ -1,5 +1,4 @@
 import axios from "axios";
-import { fetch } from "../utils";
 import { md5 } from "js-md5";
 import {
   HashSignPostOutput,
@@ -9,15 +8,17 @@ import {
   FileHashPostOutput,
   PlaylistAddTrackPostOutput,
   PlaylistAddTrackPostInput,
-  PlaylistTrackSchema,
+  FileSchema,
 } from "@repo/schema";
 
 import { Player } from "../api";
+import { fetch, parseUri } from "../utils";
 import {
   LocalFileTrack,
-  HubPlaylist,
   ModelMutation,
   ModelSelector,
+  Track,
+  isLocalFileTrack,
 } from "../model";
 
 export class ApiService {
@@ -176,5 +177,24 @@ export class ApiService {
       fileId: result.id,
       key: result.key,
     };
+  }
+
+  async parseTrackUri(track: Track) {
+    if (isLocalFileTrack(track)) {
+      return parseUri(track.localFile);
+    }
+
+    const result = await fetch<
+      FileSchema.SignPost["Output"],
+      FileSchema.SignPost["Input"]
+    >({
+      url: "/api/file/sign",
+      method: "POST",
+      data: {
+        fileId: track.fileId!,
+      },
+    });
+
+    return result.preSignedUrl;
   }
 }

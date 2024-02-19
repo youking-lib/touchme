@@ -1,0 +1,160 @@
+import { useEffect, useRef, useState } from "react";
+import { useSpring, animated } from "@react-spring/web";
+import { Icon } from "@repo/ui";
+
+import { usePlayer, useSelector } from "../hooks";
+import { ModelSelector, Playlist, isLocalFileTrack } from "../model";
+import { Playtracks } from "./player-tracks";
+import clsx from "clsx";
+
+export type PlaylistItemProps = {
+  playlist: Playlist;
+  defaultTrackHeight?: number;
+};
+
+export function PlaylistItem({
+  playlist,
+  defaultTrackHeight = 200,
+}: PlaylistItemProps) {
+  const playingQueueItem = useSelector(ModelSelector.getPlayingQueue);
+  const [open, setOpen] = useState(playingQueueItem?.id === playlist.id);
+  const tracksWrapperRef = useRef<HTMLDivElement>(null);
+  const tracksWrapperStyle = useSpring({
+    maxHeight: open ? defaultTrackHeight : 0,
+  });
+
+  const isLocalPlaylist = useSelector(state =>
+    ModelSelector.getIsLocalPlaylist(state, playlist.id)
+  );
+
+  return (
+    <div>
+      <div
+        className="flex items-center border-b border-t space-x-1 p-2"
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
+        <div className="flex-none cursor-pointer">
+          <span
+            className={clsx("inline-block transition", {
+              "-rotate-90": open,
+              "rotate-0": !open,
+            })}
+          >
+            <Icon name="ChevronLeft" size={18} />
+          </span>
+        </div>
+
+        <div className="grow flex items-center space-x-1">
+          <div>
+            <Icon name="DiscAlbum" size={48} />
+          </div>
+
+          <div>
+            <div className="text-foreground font-semibold text-sm">
+              <Title playlist={playlist} />
+            </div>
+
+            <div className="text-secondray text-xs">
+              {playlist.tracks.length} Songs
+            </div>
+          </div>
+        </div>
+
+        {isLocalPlaylist ? (
+          <LocalPlaylistUpload playlistId={playlist.id} />
+        ) : (
+          <HubPlaylistFork playlistId={playlist.id} />
+        )}
+      </div>
+
+      <animated.div
+        style={tracksWrapperStyle}
+        className="overflow-auto"
+        ref={tracksWrapperRef}
+      >
+        <Playtracks playlist={playlist} />
+      </animated.div>
+    </div>
+  );
+}
+
+function LocalPlaylistUpload({ playlistId }: { playlistId: string }) {
+  const api = usePlayer();
+
+  return (
+    <div
+      className="flex-none cursor-pointer"
+      onClick={() => {
+        api?.apiService.uploadPlaylist(playlistId);
+      }}
+    >
+      <Icon name="UploadCloud" size={16} />
+    </div>
+  );
+}
+
+function HubPlaylistFork({ playlistId }: { playlistId: string }) {
+  const api = usePlayer();
+
+  return (
+    <div className="flex cursor-pointer gap-2">
+      <Icon name="Star" size={16} />
+      <Icon name="Headphones" size={16} />
+    </div>
+  );
+}
+
+function Title({ playlist }: { playlist: Playlist }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const player = usePlayer();
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current?.select();
+    }
+  }, [isEditing]);
+
+  const playlistTitle = getTitle(playlist.name);
+
+  return (
+    <>
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          autoFocus
+          className="border-none bg-transparent outline-none"
+          onBlur={() => setIsEditing(false)}
+          onKeyDown={async (e: React.KeyboardEvent) => {
+            const target = e.target as HTMLInputElement;
+            const value = target.value;
+
+            if (e.key === "Enter") {
+              await player?.apiService.updatePlaylistName(playlist.id, value);
+              setIsEditing(false);
+            }
+
+            if (e.key === "Escape") {
+              setIsEditing(false);
+            }
+          }}
+          defaultValue={playlistTitle}
+        />
+      ) : (
+        <span
+          onDoubleClick={() => setIsEditing(true)}
+          onClick={e => e.stopPropagation()}
+        >
+          {playlistTitle}
+        </span>
+      )}
+    </>
+  );
+}
+
+export const getTitle = (title: string) => {
+  return title || "Playlist";
+};

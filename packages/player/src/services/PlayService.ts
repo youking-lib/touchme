@@ -4,7 +4,6 @@ import { parseTrackUri } from "../utils";
 
 export class PlayService {
   private audio: HTMLAudioElement = new Audio();
-  private track: Track | null = null;
 
   constructor(public api: Player) {}
 
@@ -52,13 +51,8 @@ export class PlayService {
     this.audio.volume = volume;
   }
 
-  async setTrack(track: Track) {
-    if (this.track !== track) {
-      const path = await parseTrackUri(track);
-
-      this.track = track;
-      this.audio.src = path;
-    }
+  async setSource(src: string) {
+    this.audio.src = src;
   }
 
   setPlaybackRate(playbackRate: number) {
