@@ -1,4 +1,11 @@
-import { PlayerStatus, Playlist, ModelSelector, Track, UploadTask } from ".";
+import {
+  PlayerStatus,
+  Playlist,
+  ModelSelector,
+  UploadTask,
+  LocalPlaylist,
+  Track,
+} from ".";
 import { PlayerState } from "./state";
 
 export const setDarkMode = (state: PlayerState) =>
@@ -14,9 +21,20 @@ export const setPlayerTabsOpen = (
     state.playerTabsOpen = open;
   });
 
-export const setLocalPlaylists = (state: PlayerState, playlists: Playlist[]) =>
+export const setLocalPlaylists = (
+  state: PlayerState,
+  playlists: LocalPlaylist[]
+) =>
   PlayerState.set(state, draft => {
     draft.localPlaylists = playlists;
+  });
+
+export const setHubViewState = (
+  state: PlayerState,
+  hubViewState: Partial<PlayerState["hubViewState"]>
+) =>
+  PlayerState.set(state, draft => {
+    Object.assign(draft.hubViewState, hubViewState);
   });
 
 export const setOrInitPlayQueue = (

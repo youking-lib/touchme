@@ -1,5 +1,12 @@
 import { immerable, produce } from "immer";
-import { PlayerStatus, Playlist, Track, UploadTask } from ".";
+import {
+  HubPlaylist,
+  LocalPlaylist,
+  PlayerStatus,
+  Playlist,
+  Track,
+  UploadTask,
+} from ".";
 
 export class PlayerState {
   [immerable] = true;
@@ -10,8 +17,13 @@ export class PlayerState {
 
   darkMode = false;
 
-  playlists: Playlist[] = [];
-  localPlaylists: Playlist[] = [];
+  subPlaylists: HubPlaylist[] = [];
+  localPlaylists: LocalPlaylist[] = [];
+
+  hubViewState = {
+    playlists: [] as HubPlaylist[],
+    initialzie: false,
+  };
 
   playingQueue: Playlist | null = null;
   playingTrack: Track | null = null;

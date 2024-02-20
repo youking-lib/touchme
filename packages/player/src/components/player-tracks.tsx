@@ -10,16 +10,14 @@ import { clsx } from "clsx";
 
 import { useSelector, useLazyPlayer } from "../hooks";
 import { Playlist, ModelSelector, Track, ModelMutation } from "../model";
-import { PlayerlistItem, getTitle } from "./player-list-item";
+import { getTitle } from "./playlist-item";
 
-export function PlayerTracks({ playlist }: { playlist: Playlist }) {
+export function Playtracks({ playlist }: { playlist: Playlist }) {
   const tracks = playlist.tracks || [];
   const playTrack = useSelector(ModelSelector.getPlayingTrack);
 
   return (
     <div className="text-muted-foreground">
-      <PlayerlistItem playlist={playlist} />
-
       <Table className="text-xs table-fixed">
         <colgroup>
           <col width="2" />
@@ -28,7 +26,7 @@ export function PlayerTracks({ playlist }: { playlist: Playlist }) {
         </colgroup>
 
         <TableCaption className="text-xs">
-          {getTitle(playlist)}|{tracks.length} Tracks
+          {getTitle(playlist.name)}|{tracks.length} Tracks
         </TableCaption>
 
         <TableBody>
@@ -86,7 +84,9 @@ function TrackRow({ track, index, active, playlist }: TrackRowProps) {
       >
         {track.title}
       </TableCell>
-      <TableCell className="text-right">{track.artist[0]}</TableCell>
+      <TableCell className="text-right text-ellipsis text-nowrap overflow-hidden">
+        {track.artists}
+      </TableCell>
     </TableRow>
   );
 }

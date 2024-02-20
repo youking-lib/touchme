@@ -1,9 +1,4 @@
-@import '@repo/ui/dist/index.css';
-
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
-
 
 .player * {
   @apply border-secondary

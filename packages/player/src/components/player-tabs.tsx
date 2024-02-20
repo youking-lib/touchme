@@ -1,10 +1,13 @@
 import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui";
-import { PlayerList } from "./player-list";
+import { UserPlaylists } from "./playlists";
 import { HubContent } from "./hub-content";
 
 export function PlayerTabs() {
   return (
-    <Tabs defaultValue="playlist" className="rounded-b-xl bg-secondary">
+    <Tabs
+      defaultValue="playlist"
+      className="rounded-b-xl bg-secondary min-h-[600px]"
+    >
       <TabsList>
         <TabsTrigger value="playlist">
           <Icon name="ListMusic" size={14} />{" "}
@@ -18,10 +21,10 @@ export function PlayerTabs() {
           <Icon name="Cloud" size={14} /> <span className="ml-2">Cloud</span>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="playlist" className="mt-0">
-        <PlayerList />
+      <TabsContent value="playlist" className="pb-2 mt-0">
+        <UserPlaylists />
       </TabsContent>
-      <TabsContent value="hub">
+      <TabsContent value="hub" className="pb-2 mt-0">
         <HubContent />
       </TabsContent>
     </Tabs>

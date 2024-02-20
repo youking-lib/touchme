@@ -47,7 +47,17 @@ export const GET = async (req: NextRequest) => {
       : {},
     include: {
       user: true,
-      PlaylistTrack: true,
+      tracks: {
+        include: {
+          file: {
+            select: {
+              id: true,
+              hash: true,
+              key: true,
+            },
+          },
+        },
+      },
     },
   });
 

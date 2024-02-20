@@ -2,7 +2,7 @@ import { useToast } from "@repo/ui";
 import { useEffect, useState } from "react";
 
 import { usePlayer, useSelector } from "../hooks";
-import { FileTrack, ModelSelector, UploadTask } from "../model";
+import { LocalFileTrack, ModelSelector, UploadTask } from "../model";
 
 export function UploadTasks() {
   const tasks = useSelector(ModelSelector.getUploadTasks);
@@ -52,8 +52,9 @@ function UploadTaskToast({ task }: { task: UploadTask }) {
           api.getState(),
           task.localPlaylistId,
           item.id
-        ) as FileTrack;
-        const filename = track.file.name;
+        ) as LocalFileTrack;
+
+        const filename = track.localFile.name;
 
         return (
           <div>

@@ -1,26 +1,25 @@
-export interface Track {
-  id: string;
-  album: string;
-  artist: string[];
-  duration: number;
-  genre: string[];
-  path: string;
-  title: string;
-  format: string;
+import { PlaylistAddTrackPostOutput, PlaylistSchema } from "@repo/schema";
+
+export type Track = HubTrack | LocalFileTrack;
+
+export type HubTrack = PlaylistAddTrackPostOutput;
+
+export interface LocalFileTrack extends PlaylistAddTrackPostOutput {
+  localFile: File;
 }
 
-export interface FileTrack extends Track {
-  file: File;
-}
+export const isLocalFileTrack = (
+  track: LocalFileTrack | Track
+): track is LocalFileTrack => Boolean((track as LocalFileTrack)["localFile"]);
 
-export const isFileTrack = (track: FileTrack | Track): track is FileTrack =>
-  Boolean((track as FileTrack)["file"]);
-
-export interface Playlist {
+export type Playlist = LocalPlaylist | HubPlaylist;
+export interface LocalPlaylist {
   id: string;
   name: string;
-  tracks: Track[];
+  tracks: LocalFileTrack[];
 }
+
+export type HubPlaylist = PlaylistSchema.Get["Output"][number];
 
 export enum PlayerStatus {
   PLAY = "play",

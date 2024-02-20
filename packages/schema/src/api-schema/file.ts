@@ -12,3 +12,18 @@ export type HashSignPostOutput = {
   key: string;
   preSignedUrl?: string;
 };
+
+export module FileSchema {
+  export type SignPost = {
+    Input: z.infer<typeof SignValidator.PostInput>;
+    Output: {
+      preSignedUrl: string;
+    };
+  };
+
+  export const SignValidator = {
+    PostInput: object({
+      fileId: string(),
+    }),
+  };
+}

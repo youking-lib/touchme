@@ -70,7 +70,8 @@ export class Player {
 
     if (!track) return;
 
-    await this.playService.setTrack(track);
+    const source = await this.apiService.parseTrackUri(track);
+    await this.playService.setSource(source);
     await this.playService.play();
 
     if (track.id !== playingTrack?.id) {
@@ -118,7 +119,6 @@ export class Player {
         ModelMutation.setPlayerCurrentTime(state, currentTime)
       );
 
-      await this.playService.setTrack(track);
       this.playService.setCurrentTime(currentTime);
     }
   }

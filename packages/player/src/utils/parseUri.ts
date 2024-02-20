@@ -1,6 +1,6 @@
 import isString from "lodash/isString";
 import { readImageAsBase64 } from "./readImageAsBase64";
-import { FileTrack, Track, isFileTrack } from "../model";
+import { Track, isLocalFileTrack } from "../model";
 
 export const parseUri = async (pathOrFile: string | File) => {
   if (isString(pathOrFile)) {
@@ -12,10 +12,10 @@ export const parseUri = async (pathOrFile: string | File) => {
   return res.src;
 };
 
-export const parseTrackUri = async (track: Track | FileTrack) => {
-  if (!isFileTrack(track) || track.path) {
-    return track.path;
+export const parseTrackUri = async (track: Track) => {
+  if (!isLocalFileTrack(track) || track.fileId) {
+    return track.fileId!;
   }
 
-  return parseUri(track.file);
+  return parseUri(track.localFile);
 };

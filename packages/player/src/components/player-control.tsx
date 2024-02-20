@@ -12,7 +12,13 @@ import { animated, useSpring } from "@react-spring/web";
 import { parseBlob, IAudioMetadata } from "music-metadata-browser";
 
 import { useLazyPlayer, useMutation, useSelector } from "../hooks";
-import { FileTrack, ModelSelector, PlayerStatus, Track } from "../model";
+import {
+  LocalFileTrack,
+  ModelSelector,
+  PlayerStatus,
+  Track,
+  isLocalFileTrack,
+} from "../model";
 
 type PlayerControlProps = {};
 
@@ -111,18 +117,19 @@ function PlayingProgress() {
 
 function PlayingTrackMeta() {
   const playTrack = useSelector(ModelSelector.getPlayingTrack);
-  const artist = playTrack?.artist[0];
+  const artist = playTrack?.artists;
   const album = playTrack?.album;
 
   const [trackFormat, setTrackFormat] = useState<
     IAudioMetadata["format"] | null
   >(null);
+
   useEffect(() => {
     parseFormat();
 
     async function parseFormat() {
-      if (playTrack) {
-        const { format } = await parseBlob((playTrack as FileTrack).file);
+      if (playTrack && isLocalFileTrack(playTrack)) {
+        const { format } = await parseBlob(playTrack.localFile);
         setTrackFormat(format);
       }
     }
