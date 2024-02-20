@@ -21,7 +21,7 @@ async function readPath(path: string) {
     const tasks = await readAsImportTasks(path);
 
     for (let i = 0; i < tasks.length; i++) {
-      await importTask(tasks[0]);
+      await importTask(tasks[i]);
     }
   }
 
@@ -48,19 +48,29 @@ async function importTask(task: Task) {
     const filepath = task.files[i];
     const filename = path.basename(filepath);
     const file = await fs.readFile(filepath);
-    const { common, format } = await parseFile(filepath);
+
+    const metadata = await parseFile(filepath).catch(err => {
+      return null;
+    });
+
+    if (!metadata) {
+      continue;
+    }
+
+    const { common, format } = metadata;
     const { id: fileId } = await getOrUploadFile(file.buffer, filename);
 
     const trackData: PlaylistAddTrackPostInput = {
       playlistId: playlist.id,
       album: common.album || "",
-      artist:
+      artists: trackFieldEncode(
         common.artists ||
-        (common.artist && [common.artist]) ||
-        (common.albumartist && [common.albumartist]) ||
-        [],
+          (common.artist && [common.artist]) ||
+          (common.albumartist && [common.albumartist]) ||
+          []
+      ),
       duration: format.duration || 0,
-      genre: common.genre || [],
+      genre: trackFieldEncode(common.genre || []),
       title: common.title || filename,
       fileId,
       format: format.codec || "",
@@ -84,8 +94,8 @@ async function createTrack(data: PlaylistAddTrackPostInput) {
       playlistId: validation.data.playlistId,
       album: validation.data.album,
       duration: validation.data.duration,
-      artists: trackFieldEncode(validation.data.artist),
-      genre: trackFieldEncode(validation.data.genre),
+      artists: validation.data.artists,
+      genre: validation.data.genre,
       title: validation.data.title,
       fileId: validation.data.fileId,
       format: validation.data.format,
