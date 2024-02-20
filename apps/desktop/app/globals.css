@@ -1,0 +1,6 @@
+@tailwind utilities;
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background-color: var( --background-rgb);
+}

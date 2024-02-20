@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --concurrency 11 --filter !@repo/email --filter !docs",
+    "dev": "turbo dev --concurrency 11 --filter !@repo/email --filter !docs --filter !desktop",
+    "dev:desktop": "turbo dev --filter desktop",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "clean": "turbo clean",
