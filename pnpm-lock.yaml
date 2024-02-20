@@ -114,6 +114,9 @@ importers:
       lucia:
         specifier: ^3.0.1
         version: 3.0.1
+      music-metadata:
+        specifier: ^7.14.0
+        version: 7.14.0
       nanoid:
         specifier: ^5.0.4
         version: 5.0.4
@@ -163,6 +166,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.33)
+      dotenv-flow:
+        specifier: ^4.1.0
+        version: 4.1.0
       postcss:
         specifier: ^8.4.33
         version: 8.4.33
@@ -172,6 +178,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.0
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -379,6 +388,28 @@ importers:
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.0
+
+  packages/tools:
+    dependencies:
+      clsx:
+        specifier: ^2.1.0
+        version: 2.1.0
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      tailwind-merge:
+        specifier: ^2.2.1
+        version: 2.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.6
+        version: 20.10.6
+      tsup:
+        specifier: ^8.0.1
+        version: 8.0.1(postcss@8.4.32)(typescript@5.3.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
 
   packages/ui:
     dependencies:
@@ -8528,6 +8559,13 @@ packages:
       domhandler: 5.0.3
     dev: false
 
+  /dotenv-flow@4.1.0:
+    resolution: {integrity: sha512-0cwP9jpQBQfyHwvE0cRhraZMkdV45TQedA8AAUZMsFzvmLcQyc1HPv+oX0OOYwLFjIlvgVepQ+WuQHbqDaHJZg==}
+    engines: {node: '>= 12.0.0'}
+    dependencies:
+      dotenv: 16.0.3
+    dev: true
+
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
@@ -14171,6 +14209,17 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.3.3
+    dev: true
+
+  /tsx@4.7.1:
+    resolution: {integrity: sha512-8d6VuibXHtlN5E3zFkgY8u4DX7Y3Z27zvvPKVmLon/D4AjuKzarkUBTLDBgj9iTQ0hg5xM7c/mYiRVM+HETf0g==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+    dependencies:
+      esbuild: 0.19.11
+      get-tsconfig: 4.7.2
+    optionalDependencies:
+      fsevents: 2.3.3
     dev: true
 
   /tunnel@0.0.6:

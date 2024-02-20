@@ -25,6 +25,7 @@
     "axios": "^1.6.7",
     "js-md5": "^0.8.3",
     "lucia": "^3.0.1",
+    "music-metadata": "^7.14.0",
     "nanoid": "^5.0.4",
     "next": "^14.0.4",
     "nodemailer": "^6.9.9",
@@ -43,9 +44,11 @@
     "@types/react": "^18.2.46",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
+    "dotenv-flow": "^4.1.0",
     "postcss": "^8.4.33",
     "prisma": "^5.9.1",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   }
 }
