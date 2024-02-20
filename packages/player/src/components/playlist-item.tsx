@@ -28,7 +28,7 @@ export function PlaylistItem({
   );
 
   return (
-    <div>
+    <div className="text-neutral-500">
       <div
         className="flex items-center border-b border-t space-x-1 p-2"
         onClick={() => {
@@ -46,19 +46,17 @@ export function PlaylistItem({
           </span>
         </div>
 
-        <div className="grow flex items-center space-x-1">
-          <div>
-            <Icon name="DiscAlbum" size={48} />
+        <div className="grow flex items-center space-x-2">
+          <div className="w-[48px] h-[48px] bg-neutral-950 flex items-center justify-center">
+            <Icon name="DiscAlbum" size={32} />
           </div>
 
-          <div>
-            <div className="text-foreground font-semibold text-sm">
-              <Title playlist={playlist} />
+          <div className="space-y-2">
+            <div className="text-neutral-300 text-sm">
+              <Title playlist={playlist} editable={isLocalPlaylist} />
             </div>
 
-            <div className="text-secondray text-xs">
-              {playlist.tracks.length} Songs
-            </div>
+            <div className="text-xs">{playlist.tracks.length} Songs</div>
           </div>
         </div>
 
@@ -90,7 +88,7 @@ function LocalPlaylistUpload({ playlistId }: { playlistId: string }) {
         api?.apiService.uploadPlaylist(playlistId);
       }}
     >
-      <Icon name="UploadCloud" size={16} />
+      <Icon name="UploadCloud" size={14} />
     </div>
   );
 }
@@ -100,13 +98,19 @@ function HubPlaylistFork({ playlistId }: { playlistId: string }) {
 
   return (
     <div className="flex cursor-pointer gap-2">
-      <Icon name="Star" size={16} />
-      <Icon name="Headphones" size={16} />
+      <Icon name="Star" size={14} />
+      <Icon name="Headphones" size={14} />
     </div>
   );
 }
 
-function Title({ playlist }: { playlist: Playlist }) {
+function Title({
+  playlist,
+  editable,
+}: {
+  playlist: Playlist;
+  editable: boolean;
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -121,7 +125,7 @@ function Title({ playlist }: { playlist: Playlist }) {
   const playlistTitle = getTitle(playlist.name);
 
   return (
-    <>
+    <div onClick={e => e.stopPropagation()}>
       {isEditing ? (
         <input
           ref={inputRef}
@@ -145,13 +149,16 @@ function Title({ playlist }: { playlist: Playlist }) {
         />
       ) : (
         <span
-          onDoubleClick={() => setIsEditing(true)}
-          onClick={e => e.stopPropagation()}
+          onDoubleClick={() => {
+            if (editable) {
+              setIsEditing(true);
+            }
+          }}
         >
           {playlistTitle}
         </span>
       )}
-    </>
+    </div>
   );
 }
 

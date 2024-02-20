@@ -36,7 +36,7 @@ export const notFound = () => {
   );
 };
 
-export const success = (data?: object | null, init?: ResponseInit) => {
+export const success = <T extends any>(data?: T, init?: ResponseInit) => {
   return Response.json(
     {
       success: true,
