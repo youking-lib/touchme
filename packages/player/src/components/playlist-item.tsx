@@ -30,7 +30,7 @@ export function PlaylistItem({
   return (
     <div className="text-neutral-500">
       <div
-        className="flex items-center border-b border-t space-x-1 p-2"
+        className="flex items-center border-b border-t gap-2 p-2"
         onClick={() => {
           setOpen(!open);
         }}
@@ -46,13 +46,13 @@ export function PlaylistItem({
           </span>
         </div>
 
-        <div className="grow flex items-center space-x-2">
-          <div className="w-[48px] h-[48px] bg-neutral-950 flex items-center justify-center">
+        <div className="flex-1 flex items-center space-x-2 overflow-hidden">
+          <div className="w-[48px] h-[48px] bg-neutral-950 flex-shrink-0 flex items-center justify-center">
             <Icon name="DiscAlbum" size={32} />
           </div>
 
-          <div className="space-y-2">
-            <div className="text-neutral-300 text-sm">
+          <div className="space-y-2 flex-1 overflow-hidden">
+            <div className="w-full text-neutral-300">
               <Title playlist={playlist} editable={isLocalPlaylist} />
             </div>
 
@@ -125,7 +125,10 @@ function Title({
   const playlistTitle = getTitle(playlist.name);
 
   return (
-    <div onClick={e => e.stopPropagation()}>
+    <div
+      onClick={e => e.stopPropagation()}
+      className="text-sm text-ellipsis text-nowrap overflow-hidden"
+    >
       {isEditing ? (
         <input
           ref={inputRef}
