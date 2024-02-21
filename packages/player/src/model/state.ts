@@ -11,6 +11,8 @@ import {
 export class PlayerState {
   [immerable] = true;
 
+  baseUrl: string = "/";
+
   config = {
     DEBUG_MUSIC_SOURCE: "/Welshly%20Arms%20-%20Legendary.flac",
   };

@@ -12,7 +12,9 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "window": {
+        "startDragging": true
+      }
     },
     "bundle": {
       "active": true,
@@ -29,7 +31,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.touchme.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -56,10 +58,13 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
-        "resizable": true,
-        "title": "touchme",
-        "width": 800
+        "height": 800,
+        "width": 360,
+        "maxWidth": 360,
+        "resizable": false,
+        "title": "",
+        "theme": "Dark",
+        "titleBarStyle": "Overlay"
       }
     ]
   }

@@ -12,7 +12,7 @@ import {
 } from "@repo/schema";
 
 import { Player } from "../api";
-import { fetch, parseUri } from "../utils";
+import { parseUri } from "../utils";
 import {
   LocalFileTrack,
   ModelMutation,
@@ -25,7 +25,7 @@ export class ApiService {
   constructor(public api: Player) {}
 
   async getPlaylists() {
-    const playlists = await fetch<
+    const playlists = await this.api.systemAdaptor.fetch<
       PlaylistSchema.Get["Output"],
       PlaylistSchema.Get["Input"]
     >({
@@ -66,7 +66,7 @@ export class ApiService {
 
     if (!isLocalPlaylist) return;
 
-    const playlist = await fetch<
+    const playlist = await this.api.systemAdaptor.fetch<
       PlaylistSchema.Post["Output"],
       PlaylistSchema.Post["Input"]
     >({
@@ -100,7 +100,10 @@ export class ApiService {
         }
       );
 
-      await fetch<PlaylistAddTrackPostOutput, PlaylistAddTrackPostInput>({
+      await this.api.systemAdaptor.fetch<
+        PlaylistAddTrackPostOutput,
+        PlaylistAddTrackPostInput
+      >({
         url: `/api/playlist/${playlist.id}/add-track`,
         method: "POST",
         data: {
@@ -130,16 +133,17 @@ export class ApiService {
     const buffer = await file.arrayBuffer();
     const hash = md5(buffer);
 
-    const hashSignResponse = await fetch<HashSignPostOutput, HashSignPostInput>(
-      {
-        url: "/api/file/hash-sign",
-        method: "POST",
-        data: {
-          hash,
-          filename: file.name,
-        },
-      }
-    );
+    const hashSignResponse = await this.api.systemAdaptor.fetch<
+      HashSignPostOutput,
+      HashSignPostInput
+    >({
+      url: "/api/file/hash-sign",
+      method: "POST",
+      data: {
+        hash,
+        filename: file.name,
+      },
+    });
 
     if (!hashSignResponse.preSignedUrl) {
       return {
@@ -165,7 +169,10 @@ export class ApiService {
       throw new Error("Upload Error: " + res.statusText);
     }
 
-    const result = await fetch<FileHashPostOutput, FileHashPostInput>({
+    const result = await this.api.systemAdaptor.fetch<
+      FileHashPostOutput,
+      FileHashPostInput
+    >({
       url: "/api/file-hash",
       method: "POST",
       data: {
@@ -184,7 +191,7 @@ export class ApiService {
       return parseUri(track.localFile);
     }
 
-    const result = await fetch<
+    const result = await this.api.systemAdaptor.fetch<
       FileSchema.SignPost["Output"],
       FileSchema.SignPost["Input"]
     >({

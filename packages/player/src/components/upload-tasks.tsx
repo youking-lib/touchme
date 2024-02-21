@@ -46,6 +46,7 @@ function UploadTaskToast({ task }: { task: UploadTask }) {
     );
 
     toastInstance.update({
+      id: "upload-task",
       title: `Upload Progress ${playlist?.name} [${uploaded.length}/${task.queue.length}]`,
       description: uploading.map(item => {
         const track = ModelSelector.getPlaylistTrackById(

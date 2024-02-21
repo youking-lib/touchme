@@ -4,10 +4,7 @@ import { HubContent } from "./hub-content";
 
 export function PlayerTabs() {
   return (
-    <Tabs
-      defaultValue="playlist"
-      className="rounded-b-xl bg-secondary min-h-[600px]"
-    >
+    <Tabs defaultValue="playlist" className="bg-secondary h-full">
       <TabsList>
         <TabsTrigger value="playlist">
           <Icon name="ListMusic" size={14} />{" "}

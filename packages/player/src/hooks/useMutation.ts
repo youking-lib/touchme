@@ -15,6 +15,7 @@ export function useMutation(): UseMutationReturn {
     const modifier = {} as UseMutationReturn;
 
     (Object.keys(ModelMutation) as (keyof UseMutationReturn)[]).forEach(key => {
+      // @ts-ignore
       modifier[key] = (...args: any[]) => {
         dispatch(draft => {
           // @ts-ignore

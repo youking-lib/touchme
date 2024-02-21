@@ -7,7 +7,7 @@ export default function Page(): JSX.Element {
       <SlideImage style={{ height: "100vh", width: "100vw" }} />
 
       <div className="absolute left-10 top-10">
-        <Player />
+        <Player className="rounded-xl overflow-hidden" />
       </div>
     </main>
   );

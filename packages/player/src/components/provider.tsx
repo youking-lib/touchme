@@ -4,12 +4,19 @@ import { PlayerContext, StateContext } from "../hooks";
 import { PlayerState } from "../model/state";
 import { Player } from "../api";
 
-export function Provider(
-  props: React.PropsWithChildren<{ initialState?: PlayerState }>
-) {
-  const [state, dispatch] = useImmer(
-    () => props.initialState || new PlayerState()
-  );
+export type ProviderProps = React.PropsWithChildren<{
+  initialState?: Partial<PlayerState>;
+}>;
+
+export function Provider(props: ProviderProps) {
+  const [state, dispatch] = useImmer(() => {
+    return PlayerState.set(new PlayerState(), draft => {
+      if (props.initialState) {
+        Object.assign(draft, props.initialState);
+      }
+    });
+  });
+
   const [player, setPlayer] = useState<Player | null>(null);
 
   useEffect(() => {
@@ -26,6 +33,7 @@ export function Provider(
 
     setPlayer(instance);
 
+    // @ts-ignore
     window["player"] = instance;
 
     return instance.init();

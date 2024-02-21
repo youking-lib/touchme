@@ -2,9 +2,10 @@
 
 import "@repo/ui/styles.css";
 
-import * as React from "react";
-import { Main } from "./components/main";
+import { Main, MainProps } from "./components/main";
 
-export function Player({ children }: React.PropsWithChildren): JSX.Element {
-  return <Main />;
+export type PlayerProps = MainProps;
+
+export function Player(props: PlayerProps): JSX.Element {
+  return <Main {...props} />;
 }

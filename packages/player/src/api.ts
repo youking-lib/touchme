@@ -10,6 +10,7 @@ import { LocalService } from "./services/LocalService";
 import { PlayService } from "./services/PlayService";
 import { ApiService } from "./services/ApiService";
 import { ModelHelpers } from "./model-helpers";
+import { SystemAdaptor } from "./utils/adaptor";
 
 export type PlayerOptions = {
   state: PlayerState;
@@ -17,6 +18,8 @@ export type PlayerOptions = {
 };
 
 export class Player {
+  systemAdaptor = new SystemAdaptor();
+
   playService = new PlayService(this);
   localService = new LocalService(this);
   apiService = new ApiService(this);
