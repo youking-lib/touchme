@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getSessionUser } from "@/libs/auth";
-import { upload } from "@/libs/storage";
+import { getOrUploadFile } from "@/libs/storage";
 import { invalidBody, success } from "@/libs/http";
 
 export const POST = async (req: NextRequest) => {
@@ -12,7 +12,8 @@ export const POST = async (req: NextRequest) => {
   }
 
   const user = await getSessionUser();
-  const res = await upload(file, user?.id);
+  const buffer = await file.arrayBuffer();
+  const res = await getOrUploadFile(buffer, file.name, user?.id);
 
   return success(res);
 };

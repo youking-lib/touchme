@@ -12,12 +12,6 @@ import { md5 } from "js-md5";
 import { client } from "./s3";
 import { prisma } from "../prisma";
 
-export async function upload(file: File, userId?: string) {
-  const fileHash = await getOrUploadFile(file);
-
-  return fileHash;
-}
-
 export async function getUploadedFileHash(hash: string) {
   const fileHash = await prisma.fileHash.findUnique({
     where: {
@@ -68,8 +62,11 @@ export async function getPreSignedGetUrl(fullKey: string) {
   return preSignedUrl;
 }
 
-async function getOrUploadFile(file: File) {
-  const buffer = await file.arrayBuffer();
+export async function getOrUploadFile(
+  buffer: ArrayBuffer,
+  filename: string,
+  userId?: string
+) {
   const hash = md5(buffer);
 
   const fileHash = await prisma.fileHash.findUnique({
@@ -82,7 +79,7 @@ async function getOrUploadFile(file: File) {
     return fileHash;
   }
 
-  const Key = getFullKey(`${nanoid()}${path.extname(file.name)}`);
+  const Key = getFullKey(`${nanoid()}${path.extname(filename)}`);
 
   await client.send(
     new PutObjectCommand({
