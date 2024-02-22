@@ -1,80 +1,58 @@
 import { useEffect, useRef, useState } from "react";
-import { useSpring, animated } from "@react-spring/web";
-import { Icon } from "@repo/ui";
+import {
+  Icon,
+  AccordionContent,
+  AccordionItem,
+  AccordionPrimitive,
+  ChevronDownIcon,
+} from "@repo/ui";
 
 import { usePlayer, useSelector } from "../hooks";
-import { ModelSelector, Playlist, isLocalFileTrack } from "../model";
+import { ModelSelector, Playlist } from "../model";
 import { Playtracks } from "./player-tracks";
-import clsx from "clsx";
 
 export type PlaylistItemProps = {
   playlist: Playlist;
-  defaultTrackHeight?: number;
 };
 
-export function PlaylistItem({
-  playlist,
-  defaultTrackHeight = 200,
-}: PlaylistItemProps) {
-  const playingQueueItem = useSelector(ModelSelector.getPlayingQueue);
-  const [open, setOpen] = useState(playingQueueItem?.id === playlist.id);
-  const tracksWrapperRef = useRef<HTMLDivElement>(null);
-  const tracksWrapperStyle = useSpring({
-    maxHeight: open ? defaultTrackHeight : 0,
-  });
-
+export function PlaylistItem({ playlist }: PlaylistItemProps) {
   const isLocalPlaylist = useSelector(state =>
     ModelSelector.getIsLocalPlaylist(state, playlist.id)
   );
 
   return (
-    <div className="text-neutral-500">
-      <div
-        className="flex items-center border-b border-t gap-2 p-2"
-        onClick={() => {
-          setOpen(!open);
-        }}
-      >
-        <div className="flex-none cursor-pointer">
-          <span
-            className={clsx("inline-block transition", {
-              "-rotate-90": open,
-              "rotate-0": !open,
-            })}
-          >
-            <Icon name="ChevronLeft" size={18} />
-          </span>
-        </div>
+    <AccordionItem value={playlist.id}>
+      <AccordionPrimitive.Header className="flex p-1 gap-2">
+        <AccordionPrimitive.Trigger className="flex items-center transition-all [&[data-state=open]>svg]:rotate-0">
+          <ChevronDownIcon className="h-4 w-4 shrink-0 transition-transform duration-200 rotate-90" />
 
-        <div className="flex-1 flex items-center space-x-2 overflow-hidden">
-          <div className="w-[48px] h-[48px] bg-neutral-950 flex-shrink-0 flex items-center justify-center">
+          <span className="inline-flex w-[48px] h-[48px] bg-neutral-950 flex-shrink-0 items-center justify-center">
             <Icon name="DiscAlbum" size={32} />
-          </div>
+          </span>
+        </AccordionPrimitive.Trigger>
 
-          <div className="space-y-2 flex-1 overflow-hidden">
-            <div className="w-full text-neutral-300">
-              <Title playlist={playlist} editable={isLocalPlaylist} />
+        <div className="flex flex-1 items-center justify-between text-xs overflow-hidden gap-2">
+          <div className="flex items-center space-x-2 overflow-hidden text-left">
+            <div className="space-y-2 flex-1 overflow-hidden">
+              <div className="w-full text-neutral-300">
+                <Title playlist={playlist} editable={isLocalPlaylist} />
+              </div>
+
+              <div className="text-xs">{playlist.tracks.length} Songs</div>
             </div>
-
-            <div className="text-xs">{playlist.tracks.length} Songs</div>
           </div>
+
+          {isLocalPlaylist ? (
+            <LocalPlaylistUpload playlistId={playlist.id} />
+          ) : (
+            <HubPlaylistFork playlistId={playlist.id} />
+          )}
         </div>
-
-        {isLocalPlaylist ? (
-          <LocalPlaylistUpload playlistId={playlist.id} />
-        ) : (
-          <HubPlaylistFork playlistId={playlist.id} />
-        )}
-      </div>
-
-      <animated.div
-        style={tracksWrapperStyle}
-        className="overflow-auto"
-        ref={tracksWrapperRef}
-      >
+      </AccordionPrimitive.Header>
+      <AccordionContent className="max-h-[212px] overflow-auto p-2">
         <Playtracks playlist={playlist} />
-      </animated.div>
-    </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 
@@ -125,10 +103,7 @@ function Title({
   const playlistTitle = getTitle(playlist.name);
 
   return (
-    <div
-      onClick={e => e.stopPropagation()}
-      className="text-sm text-ellipsis text-nowrap overflow-hidden"
-    >
+    <div className="text-xs text-ellipsis text-nowrap overflow-hidden">
       {isEditing ? (
         <input
           ref={inputRef}
@@ -157,6 +132,7 @@ function Title({
               setIsEditing(true);
             }
           }}
+          title={playlistTitle}
         >
           {playlistTitle}
         </span>
