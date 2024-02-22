@@ -1,10 +1,10 @@
-name: 'publish'
+name: "publish"
 
 # This will trigger the action on each push to the `release` branch.
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   publish-tauri:
@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
+
       - uses: pnpm/action-setup@v3
         name: Install pnpm
         with:
@@ -73,8 +73,8 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           tagName: touchme-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          projectPath: './apps/desktop'
-          releaseName: 'Touchme v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          projectPath: ./apps/desktop
+          releaseName: "Touchme v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
