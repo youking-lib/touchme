@@ -5,6 +5,7 @@
   "scripts": {
     "dev:desktop": "tauri dev",
     "dev": "next dev --port 3002",
+    "build:desktop-static": "pnpm turbo build --filter=desktop",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
