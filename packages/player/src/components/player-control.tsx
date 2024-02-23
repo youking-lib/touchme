@@ -9,16 +9,14 @@ import {
   Separator,
 } from "@repo/ui";
 import { animated, useSpring } from "@react-spring/web";
-import { parseBlob, IAudioMetadata } from "music-metadata-browser";
+import {
+  IAudioMetadata,
+  fetchFromUrl,
+  parseBlob,
+} from "music-metadata-browser";
 
 import { useLazyPlayer, useMutation, useSelector } from "../hooks";
-import {
-  LocalFileTrack,
-  ModelSelector,
-  PlayerStatus,
-  Track,
-  isLocalFileTrack,
-} from "../model";
+import { ModelSelector, PlayerStatus, isLocalFileTrack } from "../model";
 
 type PlayerControlProps = {};
 
@@ -119,6 +117,7 @@ function PlayingTrackMeta() {
   const playTrack = useSelector(ModelSelector.getPlayingTrack);
   const artist = playTrack?.artists;
   const album = playTrack?.album;
+  const loadApi = useLazyPlayer();
 
   const [trackFormat, setTrackFormat] = useState<
     IAudioMetadata["format"] | null
@@ -128,9 +127,18 @@ function PlayingTrackMeta() {
     parseFormat();
 
     async function parseFormat() {
-      if (playTrack && isLocalFileTrack(playTrack)) {
+      if (!playTrack) {
+        return;
+      }
+
+      if (isLocalFileTrack(playTrack)) {
         const { format } = await parseBlob(playTrack.localFile);
         setTrackFormat(format);
+      } else {
+        // const api = await loadApi();
+        // const url = await api.apiService.parseTrackUri(playTrack);
+        // const { format } = await fetchFromUrl(url);
+        // setTrackFormat(format);
       }
     }
   }, [playTrack]);
@@ -145,24 +153,30 @@ function PlayingTrackMeta() {
         {trackFormat?.codec && (
           <>
             <div>{trackFormat.codec}</div>
-            <Separator orientation="vertical" />
           </>
         )}
         {trackFormat?.bitrate && (
           <>
-            <div>{(trackFormat.bitrate / 1000).toFixed(0)}kbps</div>
             <Separator orientation="vertical" />
+            <div>{(trackFormat.bitrate / 1000).toFixed(0)}kbps</div>
           </>
         )}
         {trackFormat?.bitsPerSample && (
           <>
-            <div>{trackFormat.bitsPerSample}bit</div>
             <Separator orientation="vertical" />
+            <div>{trackFormat.bitsPerSample}bit</div>
           </>
         )}
         {trackFormat?.sampleRate && (
           <>
+            <Separator orientation="vertical" />
             <div>{trackFormat.sampleRate / 1000}kHz</div>
+          </>
+        )}
+        {trackFormat?.lossless && (
+          <>
+            <Separator orientation="vertical" />
+            <div>lossless</div>
           </>
         )}
       </div>

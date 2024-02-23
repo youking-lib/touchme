@@ -74,6 +74,7 @@ export class Player {
     if (!track) return;
 
     const source = await this.apiService.parseTrackUri(track);
+
     await this.playService.setSource(source);
     await this.playService.play();
 

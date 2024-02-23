@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Icon,
   AccordionContent,
@@ -8,7 +8,7 @@ import {
 } from "@repo/ui";
 
 import { usePlayer, useSelector } from "../hooks";
-import { ModelSelector, Playlist } from "../model";
+import { ModelMutation, ModelSelector, Playlist } from "../model";
 import { Playtracks } from "./player-tracks";
 
 export type PlaylistItemProps = {
@@ -16,9 +16,18 @@ export type PlaylistItemProps = {
 };
 
 export function PlaylistItem({ playlist }: PlaylistItemProps) {
+  const api = usePlayer();
+
   const isLocalPlaylist = useSelector(state =>
     ModelSelector.getIsLocalPlaylist(state, playlist.id)
   );
+
+  const onPlay = useCallback(() => {
+    if (!api) return;
+
+    api.setState(state => ModelMutation.setOrInitPlayQueue(state, playlist));
+    api.play(playlist.tracks[0]);
+  }, [api, playlist]);
 
   return (
     <AccordionItem value={playlist.id}>
@@ -34,11 +43,16 @@ export function PlaylistItem({ playlist }: PlaylistItemProps) {
         <div className="flex flex-1 items-center justify-between text-xs overflow-hidden gap-2">
           <div className="flex items-center space-x-2 overflow-hidden text-left">
             <div className="space-y-2 flex-1 overflow-hidden">
-              <div className="w-full text-neutral-300">
+              <div
+                className="w-full text-neutral-300 hover:underline cursor-pointer"
+                onClick={onPlay}
+              >
                 <Title playlist={playlist} editable={isLocalPlaylist} />
               </div>
 
-              <div className="text-xs">{playlist.tracks.length} Songs</div>
+              <AccordionPrimitive.Trigger className="text-xs">
+                {playlist.tracks.length} Songs
+              </AccordionPrimitive.Trigger>
             </div>
           </div>
 
