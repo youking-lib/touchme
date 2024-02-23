@@ -9,7 +9,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "prisma generate --schema=../../apps/web/prisma/schema.prisma"
+    "dev": "prisma generate --schema=../../apps/web/prisma/schema.prisma",
+    "build": "prisma generate --schema=../../apps/web/prisma/schema.prisma"
   },
   "devDependencies": {
     "@prisma/client": "^5.9.1",

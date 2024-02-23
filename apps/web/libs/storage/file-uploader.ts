@@ -92,6 +92,7 @@ export async function getOrUploadFile(
   return prisma.fileHash.create({
     data: {
       hash,
+      userId,
       key: Key,
     },
   });

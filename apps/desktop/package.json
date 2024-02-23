@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "desktop": "tauri dev",
+    "dev:desktop": "tauri dev",
     "dev": "next dev --port 3002",
+    "build:desktop-static": "pnpm turbo build --filter=desktop",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -32,6 +33,7 @@
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.0",
+    "turbo": "^1.12.4",
     "typescript": "^5.3.3"
   }
 }
