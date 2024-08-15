@@ -1,0 +1,32 @@
+{
+  "name": "@repo/i18n",
+  "version": "0.0.0",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint src/",
+    "dev": "tsup --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/react": "^18.2.46",
+    "clsx": "^2.1.0",
+    "i18next": "^23.10.0",
+    "react-i18next": "^14.0.5",
+    "tailwind-merge": "^2.2.1"
+  }
+}
